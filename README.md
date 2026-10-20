@@ -15,7 +15,9 @@
 and serve it to up to 8 users at once through an OpenAI-compatible API.</b></p>
 
 <p align="center">
+  <a href="#run-it">Run it</a> ·
   <a href="#quickstart">Quickstart</a> ·
+  <a href="#use-it-from-inferencekey">InferenceKey</a> ·
   <a href="#how-fast-is-it">Speed</a> ·
   <a href="#what-it-costs">Cost</a> ·
   <a href="#quality">Quality</a> ·
@@ -28,6 +30,39 @@ and serve it to up to 8 users at once through an OpenAI-compatible API.</b></p>
 > Strata's MoE offload method, its server and its batch protocol are the foundation of this repository; this
 > project adds a dedicated engine for one model. The original Strata README is kept in
 > [docs/STRATA.md](docs/STRATA.md).
+
+## Run it
+
+On a Linux machine with one RTX PRO 6000 96 GB and about 280 GB of RAM ([what you need](#what-you-need)), with the
+prebuilt engine (CUDA 13.0, sm_120, its CUDA runtime bundled; only the driver comes from the host):
+
+```bash
+git clone https://github.com/inferencekey/deepseek-one-gpu.git && cd deepseek-one-gpu
+curl -LO https://github.com/inferencekey/deepseek-one-gpu/releases/download/v0.1.0/strata-281712ce-cu130-sm120.tar.gz
+echo "dbfed1bb6b0a56922d1b19d6fd5de28eda93bf2229aa6795bf820be53590d55b  strata-281712ce-cu130-sm120.tar.gz" | sha256sum -c
+mkdir -p ~/dsv41 && tar -C ~/dsv41 -xzf strata-281712ce-cu130-sm120.tar.gz
+
+pip install -r requirements.txt "huggingface_hub[cli]"
+./run.sh
+```
+
+To build the engine yourself instead, follow [Quickstart](#quickstart) steps 1 and 2; `run.sh` finds that build in
+`~/dsv41` too. `run.sh` does the rest of the Quickstart in one go: it checks the GPU, the RAM and the engine, downloads the model
+at the pinned revision when it is missing (264.5 GB), plans which experts go to VRAM, writes `deepseek.json`, binds
+the server to the GPU's NUMA node, starts it on port 8090 and waits until it answers. Then call it:
+
+```bash
+curl http://localhost:8090/v1/chat/completions -H "Content-Type: application/json" -d '{
+  "model": "deepseek-v4.1-flash",
+  "messages": [{"role": "user", "content": "Explain mixture-of-experts models in two sentences."}],
+  "max_tokens": 200
+}'
+```
+
+Options: `--engine PATH` (default: `$ENGINE`, else the build in `~/dsv41`), `--model-dir DIR` (default
+`~/models/q2k`), `--port N`, and `--dry-run`, which prints every command for this machine without running any of
+them. `./run.sh --help` lists them. To serve it through [InferenceKey](https://inferencekey.com) with API keys and a
+dashboard, see [Use it from InferenceKey](#use-it-from-inferencekey).
 
 ## Why
 
@@ -239,6 +274,74 @@ for chunk in stream:
 
 No API key is needed by default. Before you expose the port beyond your machine, add `"api_key": "some-long-secret"`
 to `deepseek.json` (or set `STRATA_API_KEY`); clients then send it as a Bearer token. See [docs/DETAILS.md](docs/DETAILS.md).
+
+## Use it from InferenceKey
+
+[InferenceKey](https://inferencekey.com) can run this engine on **your own worker** as a custom backend: you publish
+it once with the InferenceKey SDK, pin a workload to your GPU box, and call it from anywhere through an
+OpenAI-compatible endpoint with API keys, while the model and its weights stay on your machine. Everything is in
+[integrations/inferencekey](integrations/inferencekey/README.md).
+
+<p align="center"><img src="assets/inferencekey-flow.svg" width="100%" alt="Your laptop runs publish.py and main.py with the InferenceKey SDK. InferenceKey stores the custom backend, pins the workload to your private worker and exposes an OpenAI-compatible endpoint. The worker's RTX PRO 6000 and CPU compute the reply. Measured on this engine: 63.11 tok/s for 1 user, 127.58 tok/s for 4 users at once."></p>
+
+**1. Publish the backend** (once, from any machine with the SDK: `pip install inferencekey openai`):
+
+```bash
+cd integrations/inferencekey
+cp .env.example .env    # tokens, project, worker id
+python publish.py       # packages backend.py with the server and placement tool (about 300 KB) and uploads it
+```
+
+It shows up under Platform Management, Custom backends:
+
+<p align="center"><img src="assets/inferencekey/01-custom-backend.png" width="100%" alt="InferenceKey dashboard, Custom backends: deepseek-v41-flash-one-gpu, version 0.1.0, text2text, 290.3 KiB."></p>
+
+**2. Pin a workload to your worker** with `python main.py` (`ensure()` with the `fixed` policy on `IK_WORKER_ID`, then
+`wait_until_ready()`), or from the dashboard's Create workload form with the same backend and model:
+
+<p align="center"><img src="assets/inferencekey/02-create-workload.png" width="70%" alt="InferenceKey dashboard, Create workload: Text to Text, backend deepseek-v41-flash-one-gpu 0.1.0, model vcruz305/DeepSeek-V4.1-Flash-GGUF, worker rtx-pro-6000-01 selected."></p>
+
+On the worker, the backend downloads the engine and the 264.5 GB model, plans the placement and starts the server,
+bound to the GPU's NUMA node. The first start takes a while: set `INFERENCEKEY_CUSTOM_BACKEND_READY_TIMEOUT_SECS=7200`
+in the worker's environment (the default is 300 s), or download the model beforehand and point `DSV41_MODEL_DIR` at
+it. The worker's drawer follows the setup through to "Model ready":
+
+<p align="center"><img src="assets/inferencekey/05-worker-drawer.png" width="100%" alt="InferenceKey dashboard, worker drawer of rtx-pro-6000-01: 1 GPU, 96 GB, online, Model ready, 64 CPU cores, 282 GB of RAM, GPU 0 NVIDIA RTX PRO 6000 Blackwell Server Edition healthy."></p>
+
+**3. Call it with the OpenAI client.** Give an API key access to the workload (Access column), and use the endpoint
+it shows with `model="default"`:
+
+<p align="center"><img src="assets/inferencekey/06-endpoint-access.png" width="80%" alt="InferenceKey dashboard, Edit OpenAI endpoint access: endpoint https://cloud.inferencekey.com/endpoint/private-gpu/deepseek-v41-flash/v1, API key deepseek-app enabled."></p>
+
+```python
+import json
+from openai import OpenAI
+
+client = OpenAI(base_url="https://cloud.inferencekey.com/endpoint/<project>/deepseek-v41-flash/v1",
+                api_key="ik_live_...")
+completion = client.chat.completions.create(
+    model="default",
+    messages=[{"role": "user", "content": "Explain mixture-of-experts models in two sentences."}],
+    max_tokens=400,
+)
+out = json.loads(completion.choices[0].message.content)  # a custom backend answers with its own JSON object
+print(out["text"], out["timings"])
+```
+
+**4. Serve 4 users at once.** A workload pinned with `ensure()` gets one request at a time. On the Workloads page,
+click the worker's `CONC. 1` pill, set "Concurrent requests" to 4 and save; the engine then decodes the 4 requests
+in the same step. This engine measured 127.58 tok/s in total with 4 users at once, 31.87 tok/s for the slowest,
+against 63.11 tok/s for one ([docs/RESULTS.md](docs/RESULTS.md), RTX PRO 6000 Blackwell Server Edition, AMD EPYC
+9575F, bound to the GPU's NUMA node).
+
+<p align="center"><img src="assets/inferencekey/03-workloads-ready.png" width="100%" alt="InferenceKey dashboard, Workloads: DeepSeek-V4.1-Flash on one RTX PRO 6000 assigned to rtx-pro-6000-01 with concurrency 4, Fixed policy, status Healthy; capacity 4 concurrent requests; the worker has 1 NVIDIA RTX PRO 6000 Blackwell Server Edition, 96 GB."></p>
+
+Things to know about custom backends today: the reply's message content is the backend's JSON object
+(`{text, reasoning, finish_reason, usage, timings}`), and the response's own `usage` is zero (the real counts are
+inside the object); streaming is not supported yet; each request has 300 s on the worker, so the backend caps
+`max_tokens` at 4,096 by default; tool calls are refused, as by the server itself. The screenshots are of the
+InferenceKey dashboard; the speed, quality and cost figures in this README come from the runs in
+[docs/RESULTS.md](docs/RESULTS.md).
 
 ## Features
 
