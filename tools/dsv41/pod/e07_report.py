@@ -915,7 +915,7 @@ def checkpoint_section(o):
         fixed += [[f"the warm tier ({g.get('warm_experts')} experts, pinned)", f"{g['warm_gib']:.2f}"],
                   ["the engram tables (pinned)", f"{g.get('engram_gib', 0):.2f}"],
                   ["working memory", f"{g.get('working_gib', 0):.2f}"],
-                  ["the margin (decision e07 gate)", f"{g.get('ram_margin_gib', 0):.2f}"]]
+                  ["the margin (e07_gate.py)", f"{g.get('ram_margin_gib', 0):.2f}"]]
         placed = (g.get("need_with_partial_homes_gib") if partial else g.get("need_with_homes_gib") if homes_on
                   else g.get("need_gib"))
         margin, limit = g.get("ram_margin_gib"), g.get("limit_gib")
@@ -1107,8 +1107,7 @@ BATCH_SLOT_RE = re.compile(r"^dsv41-engine serve: request (\d+): batch slot (\d+
                            r"([0-9.]+) ms by other requests' prompts; (.*)$", re.M)
 # a prompt read beside decoding slots, in chunks with a step after each but the last (dsv41-engine.cpp's line)
 BATCH_READ_RE = re.compile(r"^dsv41-engine serve: request (\d+): read beside (\d+) decoding batch slots, (\d+) tokens in "
-                           r"(\d+) chunks of (.+?) with (\d+) batch steps between them(?: \(decision-c04-long-prefill-"
-                           r"robustness 1\))?, a chunk read in ([0-9.]+) ms on average and ([0-9.]+) at most, ([0-9.]+) ms "
+                           r"(\d+) chunks of (.+?) with (\d+) batch steps between them, a chunk read in ([0-9.]+) ms on average and ([0-9.]+) at most, ([0-9.]+) ms "
                            r"from its start to its (?:first|last) token, the slots held at most ([0-9.]+) ms at once; .*$",
                            re.M)
 
@@ -1126,7 +1125,7 @@ def session_spent(o, cost):
 
 # dsv41-engine's per-batch breakdown of its steps, one line per part of the batch
 STEP_PARTS_RE = re.compile(
-    r"^dsv41-engine serve: batch steps, (.+?)(?: \(decision-c03b-batched-speed 2\))?: (\d+) steps of ([0-9.]+) rows, ([0-9.]+) ms "
+    r"^dsv41-engine serve: batch steps, (.+?): (\d+) steps of ([0-9.]+) rows, ([0-9.]+) ms "
     r"a step from one step's start to the next's \(the prompts read between them apart\): inside the step ([0-9.]+) "
     r"\(graph launch ([0-9.]+), doorbells served ([0-9.]+) of which doorbell waits ([0-9.]+), CPU jobs ([0-9.]+) and their "
     r"plan ([0-9.]+), tail ([0-9.]+), boundary ([0-9.]+) of which swap waits ([0-9.]+) at (\d+) steps; the device's graph "
@@ -1134,9 +1133,9 @@ STEP_PARTS_RE = re.compile(
     r"([0-9.]+), admissions ([0-9.]+), the loop and its stdin poll ([0-9.]+)\); per step ([0-9.]+) routed pairs to "
     r"([0-9.]+) distinct experts, ([0-9.]+) hits \(hit rate ([0-9.]+)\) and ([0-9.]+) misses in ([0-9.]+) CPU jobs reading "
     r"([0-9.]+) MiB \(([0-9.]+) GB/s\), ([0-9.]+) swaps \(([0-9.]+) MiB\) published, ([0-9.]+) deferred$", re.M)
-# C04 audit 2 and 5: a request that ran alone past a slot, and a chunk read beside the slots past 4.5 s
+# A request that ran alone past a slot, and a chunk read beside the slots past 4.5 s
 RAN_ALONE_RE = re.compile(r"^dsv41-engine serve: request (\d+): ran alone on the live sequence, not in batch slot (\d+): "
-                          r"(.*) \(C04 audit 2\); (\d+) generated \((\w+)\), holding (\d+) decoding batch slots for "
+                          r"(.*); (\d+) generated \((\w+)\), holding (\d+) decoding batch slots for "
                           r"([0-9.]+) ms(?:; not reproducible \(--cpu-numerics fork: its bits follow the "
                           r"placement\))?$", re.M)
 CHUNK_WARN_RE = re.compile(r"^dsv41-engine serve: request (\d+): warning: a chunk read beside (\d+) decoding batch slots "
@@ -1164,12 +1163,12 @@ def step_parts(log):
 
 
 def ran_alone(logs):
-    """C04 audit 2: the requests that ran alone past a batch slot, holding the decoding slots, per engine log."""
+    """The requests that ran alone past a batch slot, holding the decoding slots, per engine log."""
     rows = []
     for name, log in logs:
         for r in RAN_ALONE_RE.findall(log):
             rows.append([name, r[0], r[1], r[2], r[3], r[4], r[5], r[6]])
-    head = (f"{len(rows)} request{'' if len(rows) == 1 else 's'} ran alone past a batch slot (C04 audit 2: a prompt, or "
+    head = (f"{len(rows)} request{'' if len(rows) == 1 else 's'} ran alone past a batch slot (a prompt, or "
             "a max_tokens, past the slot's "
             "positions; the reply says \"strata_ran_alone\"); a request without max_tokens is given its slot's room "
             "instead")
@@ -1469,8 +1468,7 @@ def cbatch_head(o, stamp, build, cost, model, prefix=""):
     figures from the engine's log, items 7 and 8 once. prefix: the batch server's logs' (the combined plan's
     out/cbatch-<file>; that plan runs no load-c<N> nor det-sampling)."""
     combined = prefix == "cbatch-"
-    measured_before = ("not in this plan: measured on 2026-10-14 (strata-engine/2026-10-14-cbatch), "
-                       "decision-c04-long-prefill-robustness amendment 2")
+    measured_before = ("not in this plan: measured on 2026-10-14 (the cbatch session, see docs/RESULTS.md)")
     import chat_load
     import det_sampling_check
     d = os.path.join(o, "cbatch")
@@ -1724,7 +1722,7 @@ def cdet_head(o, stamp, build, cost, model, plan="cdet"):
         return ((load_json(os.path.join(d, name)) or {}).get("runs") or [None])[0]
     final = plan == "cfinal"
     if final:
-        out = [f"# C05 cycle 4: the fast path's speed and the quality of batched requests ({stamp})", "",
+        out = [f"# Final session: the fast path's speed and the quality of batched requests ({stamp})", "",
                "Session of `tools/dsv41/pod/e07.sh` with E07_PLAN=cfinal (item 14 read as no quality loss from "
                "batching: item 3 batched on all three tasks and item 4 "
                "against the engine quality run): serve/server.py on dsv41-engine with the engine's batch slots, its deterministic "
@@ -1738,7 +1736,7 @@ def cdet_head(o, stamp, build, cost, model, plan="cdet"):
                "Session of `tools/dsv41/pod/e07.sh` with E07_PLAN=cdet (items 14, 3 and 4): serve/server.py on "
                "dsv41-engine with the engine's batch slots and its deterministic mode on: the single user, the same user "
                "with the mode off (the speed A/B's gpu arm), the steady state of 4 users, det_batch_check.py (item 14), "
-               "det_sampling_check.py (items 7 and 8), then lm-eval through api_proxy.py at 4 concurrent requests on Q02's "
+               "det_sampling_check.py (items 7 and 8), then lm-eval through api_proxy.py at 4 concurrent requests on the reference run's "
                "fixed-seed subsets (item 3 batched); last the same server with --cpu-numerics fork for the A/B's other arm "
                "(sessions before it ran a batching-off server first); every step with "
                "its own timeout.", "",
@@ -1784,8 +1782,8 @@ def cdet_head(o, stamp, build, cost, model, plan="cdet"):
     else:
         lines.append("- steady-c4: no verdict (" + (cause(o, "steady-c4", "out/cbatch/steady-c4.json") if agg is None
                                                      else "no single user") + ")")
-    # the speed A/B: load-short's user with the deterministic mode off, the CPU experts in the GPU's numerics (the
-    # default since C05) and in the fork's (--cpu-numerics fork, the engine before C05), on one host
+    # the speed A/B: load-short's user with the deterministic mode off, the CPU experts in the GPU's numerics
+    # (--cpu-numerics gpu) and in the fork's (--cpu-numerics fork, the default), on one host
     ab_gpu, ab_fork = run_of("ab-gpu.json"), run_of("ab-fork.json")
     g_ts = ab_gpu["summary"].get("decode_tok_s_user_median") if ab_gpu else None
     f_ts = ab_fork["summary"].get("decode_tok_s_user_median") if ab_fork else None
@@ -1811,12 +1809,12 @@ def cdet_head(o, stamp, build, cost, model, plan="cdet"):
     if have:
         out += [analyze.same_engine_markdown(bar), ""]
     else:
-        out += [f"not evaluated: {'no out/quality' if not os.path.isdir(quality) else 'no Q02 engine run at ' + CDET_Q02_ENGINE}",
+        out += [f"not evaluated: {'no out/quality' if not os.path.isdir(quality) else 'no reference engine run at ' + CDET_Q02_ENGINE}",
                 ""]
-    out += ["### Against the API fresh run (reported, as in Q02)", "",
-            "The engine column is this session's batched run; the API pair's item 4 line below is Q02's reading "
+    out += ["### Against the API fresh run (reported, as in the reference run)", "",
+            "The engine column is this session's batched run; the API pair's item 4 line below is the reference run's reading "
             "(engine - API fresh), which holds the Q2_K quantization's loss: on HumanEval "
-            "the fork ran 0.878 against the engine's 0.890 in Q02 (its 2026-10-13 sessions), so the loss "
+            "the fork ran 0.878 against the engine's 0.890 in the reference run (its 2026-10-13 sessions), so the loss "
             "against the API there is the quantization's; GSM8K and IFEval have no fork run.", ""]
     if os.path.isdir(quality) and os.path.isdir(CDET_Q02_API):
         out += [analyze.markdown(analyze.analyze({"api_fresh": Path(CDET_Q02_API), "fork": None, "engine": Path(quality),
@@ -1833,10 +1831,10 @@ def cdet_head(o, stamp, build, cost, model, plan="cdet"):
             v14, why = "not evaluated", "item 4 not evaluated" + (f" ({'; '.join(bar['reasons'])})" if bar else "")
         else:
             v14 = bar["verdict"]
-            why = (f"item 3 batched on all three tasks; item 4 against Q02's engine run {bar['verdict']}: "
+            why = (f"item 3 batched on all three tasks; item 4 against the reference engine run {bar['verdict']}: "
                    + "; ".join(bar["reasons"]))
-        out += ["## Item 14 (the owner's amendment of 2026-10-19: no quality loss from batching)", "",
-                f"Goal item 14 (item 3 batched on all three tasks and item 4 against Q02's engine run): **{v14}** "
+        out += ["## Item 14 (no quality loss from batching)", "",
+                f"Item 14 (item 3 batched on all three tasks and item 4 against the reference engine run): **{v14}** "
                 f"({why}).", ""]
     log = read(os.path.join(o, "quality-engine.log"))
     slots = BATCH_SLOT_RE.findall(log)

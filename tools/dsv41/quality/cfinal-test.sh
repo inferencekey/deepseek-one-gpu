@@ -102,7 +102,7 @@ docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp/home -e STRATA_BUILD="$S
       > "$D/bad.txt" 2>&1 || rc_=$?
     echo "$rc_" > "$D/bad.rc"' > "$tmp/docker.log" 2>&1 || rc=$?
 check "the builder image ran the serve dry runs (exit $rc)" '(( rc == 0 )) && [[ -s "$d/default.out" ]]' || tail -n 20 "$tmp/docker.log"
-load_line="^dsv41-engine serve: the CPU experts in the fork.s numerics (--cpu-numerics fork, the engine before C05)"
+load_line="^dsv41-engine serve: the CPU experts in the fork.s numerics (--cpu-numerics fork, the default)"
 check "dsv41-engine: the fork's CPU numerics by default (its load line, as with --cpu-numerics fork), the GPU's with --cpu-numerics gpu (no load line); both answer the two requests in slots" \
   'grep -q "$load_line" "$d/default.err" && grep -q "$load_line" "$d/fork.err" && ! grep -q "$load_line" "$d/gpu.err" &&
    for n in default gpu fork; do (( $(grep -cE "^BDONE [01] 8 length " "$d/$n.out") == 2 )) || exit 1; done'
@@ -157,9 +157,9 @@ check "$plan: every pod step of both model paths with its timeout, 2 x its estim
      IFS=: read -r file p name <<<"$x"
      w="want_$p"
      (( $(sed -n "/^plan with the model from $name /,/^plan ($p)/p" "$file" | grep -c "; timeout min(") == $(wc -w <<<"${!w}") - 4 )) || exit 1
-     grep -qE "^  lm-eval-ifeval \(NUM_CONCURRENT 4 on the batch slots, Q02.s 1077 s in the fork.s numerics one at a time; the GPU.s 1521 s on 2026-10-19 within its timeout\) +17.9  \(total [0-9.]+; timeout min\(35.8 min, the time left\)\)$" "$file" || exit 1
-     grep -qE "^  lm-eval-gsm8k_cot_llama \(NUM_CONCURRENT 4 on the batch slots, Q02.s 531 s in the fork.s numerics one at a time; the GPU.s 909 s on 2026-10-19 within its timeout\) +8.8  \(total [0-9.]+; timeout min\(17.6 min" "$file" || exit 1
-     grep -qE "^  lm-eval-humaneval_instruct \(NUM_CONCURRENT 4 on the batch slots, Q02.s 359 s in the fork.s numerics one at a time x 1.25; the GPU.s had 162 of 164 at its 720 s cut on 2026-10-19\) +7.5  \(total [0-9.]+; timeout min\(15.0 min" "$file" || exit 1
+     grep -qE "^  lm-eval-ifeval \(NUM_CONCURRENT 4 on the batch slots, the reference run.s 1077 s in the fork.s numerics one at a time; the GPU.s 1521 s on 2026-10-19 within its timeout\) +17.9  \(total [0-9.]+; timeout min\(35.8 min, the time left\)\)$" "$file" || exit 1
+     grep -qE "^  lm-eval-gsm8k_cot_llama \(NUM_CONCURRENT 4 on the batch slots, the reference run.s 531 s in the fork.s numerics one at a time; the GPU.s 909 s on 2026-10-19 within its timeout\) +8.8  \(total [0-9.]+; timeout min\(17.6 min" "$file" || exit 1
+     grep -qE "^  lm-eval-humaneval_instruct \(NUM_CONCURRENT 4 on the batch slots, the reference run.s 359 s in the fork.s numerics one at a time x 1.25; the GPU.s had 162 of 164 at its 720 s cut on 2026-10-19\) +7.5  \(total [0-9.]+; timeout min\(15.0 min" "$file" || exit 1
      grep -qE "^  steady-c4 \(chat_load.py steady, 3 x: " "$file" || exit 1
      grep -qE "^  engine-server \(--batch 8 .*85-140 s measured in the cbatch sessions\) +2.5  \(total [0-9.]+; timeout min\(5.0 min" "$file" || exit 1
    done'
@@ -179,7 +179,7 @@ check "$plan: the payload's sources: the tarball's engine HEAD's, run_lm_eval.sh
   'grep -q "the tarball.s engine is HEAD.s$" "$f" &&
    grep -q "src/tools/dsv41/quality/run_lm_eval.sh: last changed in " "$f" &&
    ! grep -qE "src/tools/dsv41/quality/det_(batch|sampling)_check.py: last changed in " "$f" &&
-   grep -q "its lm-eval subsets are src/tools/dsv41/quality/subsets_lean2h_seed20261006.json, Q02.s" "$f"'
+   grep -q "its lm-eval subsets are src/tools/dsv41/quality/subsets_lean2h_seed20261006.json, the reference run.s" "$f"'
 
 echo "--- 3. the $plan rehearsal from its payload on the volume's path"
 bin="$tmp/bin" stubs="$tmp/stubs"
@@ -317,19 +317,19 @@ python3 "$STRATA_DIR/tools/dsv41/pod/e07_report.py" "$f" "$tmp/sheets" > "$tmp/r
 r="$tmp/sheets/2026-10-20-$plan/README.md"
 v4="$(sed -n 's/^Batched quality bar (.*: \*\*\([A-Za-z ]*\)\*\* .*/\1/p' "$r" 2>/dev/null)"
 check "the $plan sheet: item 11 (the single user against session 4's 61.55, steady-c4 against the single user with each user >= 20), item 3 batched, item 4 against the single-user engine run (${v4:-none}), item 14 from them (item 4's verdict, item 3 whole), no det-batch, items 7 and 8 nor fork arm" \
-  'grep -qE "^# C05 cycle 4: the fast path.s speed and the quality of batched requests \(20261020[0-9TZ]*\)$" "$r" &&
+  'grep -qE "^# Final session: the fast path.s speed and the quality of batched requests \(20261020[0-9TZ]*\)$" "$r" &&
    grep -q "^## Speed (item 11)$" "$r" &&
    grep -qE "^- the single user with batching on: (PASS|FAIL): [0-9.]+ tok/s against session 4.s 61.55 " "$r" &&
    grep -qE "^- steady-c4: (PASS|FAIL): [0-9.]+ tok/s in aggregate .* the single user on the batched server \(its solo path.* the slowest user [0-9.]+ tok/s \(goal: each >= 20\)$" "$r" &&
    grep -q "^## Item 3 batched (logs/quality)$" "$r" && grep -q "^## Item 4$" "$r" &&
    grep -q "^| engine batched - engine alone | n | alone | batched | diff | 95% CI | flips |$" "$r" &&
    [[ -n "$v4" && "$v4" != "not evaluated" ]] &&
-   grep -q "^## Item 14 (the owner.s amendment of 2026-10-19: no quality loss from batching)$" "$r" &&
-   grep -qE "^Goal item 14 \(item 3 batched on all three tasks and item 4 against Q02.s engine run\): \*\*$v4\*\* \(item 3 batched on all three tasks; item 4 against Q02.s engine run $v4: .*\)\.$" "$r" &&
+   grep -q "^## Item 14 (no quality loss from batching)$" "$r" &&
+   grep -qE "^Item 14 \(item 3 batched on all three tasks and item 4 against the reference engine run\): \*\*$v4\*\* \(item 3 batched on all three tasks; item 4 against the reference engine run $v4: .*\)\.$" "$r" &&
    grep -q "^## Server as run, batching on$" "$r" &&
    ! grep -qE "^## (Item 14 \(logs/det-batch.json\)|Items 7 and 8|Server as run, the A/B)" "$r" && ! grep -q "the speed A/B" "$r"' ||
   { tail -n 5 "$tmp/report.log"; grep -E "^(- |Goal item|Batched quality bar)" "$r" 2>/dev/null | sed 's/^/  /' | cut -c1-220; }
-grep -E "^(Goal item 14|Batched quality bar) " "$r" 2>/dev/null | sed 's/^/  /' | cut -c1-240 || true
+grep -E "^(Item 14|Batched quality bar) " "$r" 2>/dev/null | sed 's/^/  /' | cut -c1-240 || true
 # item 3 not whole: humaneval's status line a timeout, as the 2026-10-19 cdet session's
 f2="$tmp/report/20261021T090000Z"
 cp -r "$f" "$f2"
@@ -337,8 +337,8 @@ sed -i 's/^humaneval_instruct rc=0$/humaneval_instruct rc=124/' "$f2/out/quality
 python3 "$STRATA_DIR/tools/dsv41/pod/e07_report.py" "$f2" "$tmp/sheets" > "$tmp/report2.log" 2>&1 || true
 r2="$tmp/sheets/2026-10-21-$plan/README.md"
 check "the $plan sheet with humaneval cut (rc=124): item 14 not evaluated, naming item 3's missing task" \
-  'grep -qx "Goal item 14 (item 3 batched on all three tasks and item 4 against Q02.s engine run): \*\*not evaluated\*\* (item 3 did not come back on humaneval_instruct (humaneval_instruct rc=124))." "$r2"' ||
-  grep "^Goal item 14" "$r2" 2>/dev/null | sed 's/^/  /'
+  'grep -qx "Item 14 (item 3 batched on all three tasks and item 4 against the reference engine run): \*\*not evaluated\*\* (item 3 did not come back on humaneval_instruct (humaneval_instruct rc=124))." "$r2"' ||
+  grep "^Item 14" "$r2" 2>/dev/null | sed 's/^/  /'
 if (( failed )); then
   echo "  the tail of e07-run.out and steps.log:"
   tail -n 5 "$o/e07-run.out" "$o/steps.log" 2>/dev/null | sed 's/^/    /' || true

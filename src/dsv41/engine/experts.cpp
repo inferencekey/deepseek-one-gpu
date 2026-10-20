@@ -2464,7 +2464,7 @@ void ExpertEngine::print_summary(std::FILE* out) const {
                          "all of it%s\n", pinned_swap_layers ? " (a pinned mapping's victims go back to it)" : "",
                          I.cfg.hot.deterministic
                              ? "; the deterministic mode is on (--deterministic on), so this idle reset is the slow one: "
-                               "the next request waited 1.67-1.91 s for it on the RTX PRO 6000 (ccache cycle 1, "
+                               "the next request waited 1.67-1.91 s for it on the RTX PRO 6000 ("
                                "2026-10-14, 2885-3311 swaps after each 256-token reply); tools/dsv41/pod/e07_gate.py's "
                                "gate.json hot_homes is the --hot-homes value this host's RAM holds"
                              : "");

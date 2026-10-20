@@ -258,12 +258,12 @@ def engine(argv: list[str]) -> int:
                                             "waiting for all of it" + (
                                                 "; the deterministic mode is on (--deterministic on), so this idle reset "
                                                 "is the slow one: the next request waited 1.67-1.91 s for it on the RTX "
-                                                "PRO 6000 (ccache cycle 1, 2026-10-14, 2885-3311 swaps after each "
+                                                "PRO 6000 (2026-10-14, 2885-3311 swaps after each "
                                                 "256-token reply); tools/dsv41/pod/e07_gate.py's gate.json hot_homes is "
                                                 "the --hot-homes value this host's RAM holds" if det_default else "")),
           file=sys.stderr, flush=True)
     if not tier_free:
-        print("dsv41-engine serve: the CPU experts in the fork's numerics (--cpu-numerics fork, the engine before C05): a "
+        print("dsv41-engine serve: the CPU experts in the fork's numerics (--cpu-numerics fork, the default): a "
               "routed expert's bits follow its tier, so no batch slot ends reproducible", file=sys.stderr, flush=True)
     print("dsv41-engine serve: loaded in 1000 ms", file=sys.stderr, flush=True)
     # the batch slots (--batch N, --batch-ctx C) and the step's time model: D (the decode delay) a step of one row,
@@ -429,7 +429,7 @@ def engine(argv: list[str]) -> int:
         # run alone past a slot, said before the request runs (the real engine's line)
         if unfit:
             print(f"dsv41-engine serve: request {n_req + 1}: runs alone on the live sequence, not in batch slot {admit}: "
-                  f"{unfit} (C04 audit 2); it holds {beside} decoding batch slots until its end", file=sys.stderr,
+                  f"{unfit}; it holds {beside} decoding batch slots until its end", file=sys.stderr,
                   flush=True)
             print(f"ALONE {admit} {beside} why={unfit}", flush=True)
         stop.clear()

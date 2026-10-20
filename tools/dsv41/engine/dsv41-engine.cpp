@@ -1021,7 +1021,7 @@ int serve(e::SessionBackend& backend, e::Forward* fw, const std::vector<int32_t>
         // control line (ALONE <slot> <decoding slots held> why=<fits()'s reason>), so the server knows at once
         if (alone_past) {
             std::fprintf(stderr, "dsv41-engine serve: request %lld: runs alone on the live sequence, not in batch slot %d: "
-                         "%s (C04 audit 2); it holds %d decoding batch slots until its end\n", (long long) n_req + 1,
+                         "%s; it holds %d decoding batch slots until its end\n", (long long) n_req + 1,
                          admit_slot, unfit.c_str(), beside);
             std::fflush(stderr);
             std::printf("ALONE %d %d why=%s\n", admit_slot, beside, unfit.c_str());
@@ -1193,8 +1193,8 @@ int serve_main(const std::string& model_path, const std::string& eos_text, bool 
                              " engine=dsv41-engine";
     // The fork's numerics (the default) said once at the load
     if (ec.cpu_numerics == e::CpuNumerics::Fork)
-        std::fprintf(stderr, "dsv41-engine serve: the CPU experts in the fork's numerics (--cpu-numerics fork, the engine "
-                     "before C05): a routed expert's bits follow its tier, so no batch slot ends reproducible\n");
+        std::fprintf(stderr, "dsv41-engine serve: the CPU experts in the fork's numerics (--cpu-numerics fork, the default)"
+                     ": a routed expert's bits follow its tier, so no batch slot ends reproducible\n");
     if (dry) {
         e::ExpertEngine experts;
         if (!experts.init(model, ec, fc.chunk, nullptr, nullptr, true, err)) die(err);
@@ -1408,8 +1408,8 @@ int main(int argc, char** argv) {
 
     // The fork's numerics (the default) said once at the load
     if (ec.cpu_numerics == e::CpuNumerics::Fork)
-        std::fprintf(stderr, "dsv41-engine serve: the CPU experts in the fork's numerics (--cpu-numerics fork, the engine "
-                     "before C05): a routed expert's bits follow its tier, so no batch slot ends reproducible\n");
+        std::fprintf(stderr, "dsv41-engine serve: the CPU experts in the fork's numerics (--cpu-numerics fork, the default)"
+                     ": a routed expert's bits follow its tier, so no batch slot ends reproducible\n");
     if (dry) {
         e::ExpertEngine experts;
         if (!experts.init(model, ec, std::min(fc.chunk, fc.ctx), nullptr, nullptr, true, err)) die(err);

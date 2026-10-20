@@ -159,7 +159,7 @@ check "dsv41_engine_batch_test on tiny-b: PASS, check 9 (a read beside moving th
    grep -q "^ok   a lone slot with a max_new 1 request read beside it after 3 steps (and the slab moved to the odd experts from then on): marked reproducible" "$d/batch-test.txt" &&
    (( $(grep -cE "^ok   4 identical requests \(30 prompt tokens, 12 generated\) in a batch on (the odd experts in the slab|a slab drawn anew at every call): 4 of 4 their alone run.s bit for bit, 4 marked reproducible" "$d/batch-test.txt") == 2 )) &&
    grep -q "^ok   4 different requests (one sampled, one joining mid-batch beside 3 decoding slots, a one-token request read beside them) under a slab drawn anew at every call: " "$d/batch-test.txt" &&
-   grep -qE "^ok   the same with the fork.s CPU numerics for the misses \(the engine before C05\): [1-4] of 4 requests differ from their alone runs \(seen\)$" "$d/batch-test.txt" &&
+   grep -qE "^ok   the same with the fork.s CPU numerics for the misses \(the default\): [1-4] of 4 requests differ from their alone runs \(seen\)$" "$d/batch-test.txt" &&
    grep -q "^ok   the request read beside the slots in the mode off (its prefill split from the slab as it is): differs from its alone run (seen), marked not reproducible$" "$d/batch-test.txt"'
 python3 - "$d/rep.out" "$d/rep.err" > "$d/rep-check.txt" 2>&1 <<'EOF' || true
 import re, sys
@@ -195,7 +195,7 @@ check "the serve dry run, the promotion's shape: GEN 2 then BGEN of its prompt a
    grep -q "^BADM 0 1$" "$d/promo.out" && [[ "$(grep "^BT 0 " "$d/promo.out" | head -n 1)" == "BT 0 16" ]] &&
    grep -qE "^BDONE 0 6 length [0-9.]+ rep=1$" "$d/promo.out"'
 check "--cpu-numerics fork: the load line, the deterministic slot rep=0 beside the det=0 one, the slot line saying why" \
-  'grep -q "^dsv41-engine serve: the CPU experts in the fork.s numerics (--cpu-numerics fork, the engine before C05): a routed expert.s bits follow its tier, so no batch slot ends reproducible$" "$d/fork.err" &&
+  'grep -q "^dsv41-engine serve: the CPU experts in the fork.s numerics (--cpu-numerics fork, the default): a routed expert.s bits follow its tier, so no batch slot ends reproducible$" "$d/fork.err" &&
    grep -qE "^BDONE 0 8 length [0-9.]+ rep=0$" "$d/fork.out" && grep -qE "^BDONE 1 8 length [0-9.]+ rep=0$" "$d/fork.out" &&
    grep -qE "^dsv41-engine serve: request [0-9]+: batch slot 0: 8 generated \(length\) in .*; not reproducible \(--cpu-numerics fork: a routed expert.s bits follow its tier, so its neighbours. placement\)$" "$d/fork.err"'
 check "--cpu-numerics fork, a request that ends at its admission: BADM rep=0 for the two read beside decoding slot 0 (rep=1 in the GPU.s numerics), rep=1 for the one with nothing beside it, the read beside line saying why" \
@@ -406,7 +406,7 @@ check "$plan: every pod step of both model paths with its timeout, 2 x its estim
    grep -qE "^  det-sampling \(det_sampling_check.py; 155 s measured in the 2026-10-17 cdet session less the 300 s ERR wait fixed since\) +3  \(total " "$tmp/dry-$plan.txt" &&
    grep -qE "^  lm-eval-ifeval \(NUM_CONCURRENT 4 on the batch slots, 1042 s measured in the 2026-10-17 cdet session\) +17.4  \(total [0-9.]+; timeout min\(34.8 min, the time left\)\)$" "$tmp/dry-$plan.txt" &&
    grep -qE "^  lm-eval-gsm8k_cot_llama \(NUM_CONCURRENT 4 on the batch slots, 459 s measured in the 2026-10-17 cdet session\) +7.7  " "$tmp/dry-$plan.txt" &&
-   grep -qE "^  lm-eval-humaneval_instruct \(NUM_CONCURRENT 4 on the batch slots, Q02.s 359 s one at a time .*\) +6.0  \(total [0-9.]+; timeout min\(12.0 min" "$tmp/dry-$plan.txt" &&
+   grep -qE "^  lm-eval-humaneval_instruct \(NUM_CONCURRENT 4 on the batch slots, the reference run.s 359 s one at a time .*\) +6.0  \(total [0-9.]+; timeout min\(12.0 min" "$tmp/dry-$plan.txt" &&
    grep -qE "^  engine-server \(--batch 8 .*85-140 s measured in the cbatch sessions\) +2.5  \(total [0-9.]+; timeout min\(5.0 min" "$tmp/dry-$plan.txt"'
 usd="$(sed -n "s/^plan (volume): total .* (about \([0-9.]*\) USD at 2.60 USD\/h)$/\1/p" "$tmp/dry-$plan.txt")"
 check "$plan: the volume plan's estimate under $usd_cap USD at 2.60 USD/h (${usd:-none} USD), the session cap $usd_cap over at most 3 pods" \
@@ -430,7 +430,7 @@ check "$plan: the payload's sources: the tarball's engine HEAD's, det_batch_chec
   'grep -q "the tarball.s engine is HEAD.s$" "$tmp/dry-$plan.txt" &&
    grep -q "src/tools/dsv41/quality/det_batch_check.py: last changed in " "$tmp/dry-$plan.txt" &&
    grep -q "src/tools/dsv41/quality/run_lm_eval.sh: last changed in " "$tmp/dry-$plan.txt" &&
-   grep -q "its lm-eval subsets are src/tools/dsv41/quality/subsets_lean2h_seed20261006.json, Q02.s" "$tmp/dry-$plan.txt"'
+   grep -q "its lm-eval subsets are src/tools/dsv41/quality/subsets_lean2h_seed20261006.json, the reference run.s" "$tmp/dry-$plan.txt"'
 
 rc=0; CBATCH_STEADY_WINDOW_S=4 E07_PLAN=$plan MAX_SESSION_USD="$usd_cap" OUT="$tmp/payload-$plan" bash "$STRATA_DIR/tools/dsv41/pod/e07.sh" --payload-only \
   > "$tmp/payload-$plan.log" 2>&1 || rc=$?
@@ -511,7 +511,7 @@ check "the $plan sheet: item 14 PASS with every chain's row, items 7 and 8, the 
    grep -qE "^- steady-c4: (PASS|FAIL): [0-9.]+ tok/s in aggregate " "$r" &&
    grep -q "^## Item 3 batched (logs/quality)$" "$r" && grep -q "^## Item 4$" "$r" &&
    grep -q "^| engine batched - engine alone | n | alone | batched | diff | 95% CI | flips |$" "$r" &&
-   grep -q "^### Against the API fresh run (reported, as in Q02)$" "$r" &&
+   grep -q "^### Against the API fresh run (reported, as in the reference run)$" "$r" &&
    grep -q "^## The batch in the engine.s log (logs/quality-engine.log)$" "$r" &&
    grep -qE "^[0-9]+ requests decoded in batch slots, [0-9]+ of them reproducible" "$r"' ||
   tail -n 5 "$tmp/report-$plan.log"

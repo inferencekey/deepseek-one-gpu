@@ -1214,7 +1214,7 @@ void run_checks(const e::Model& m, bool cpu) {
                                                                                e::CpuNumerics::Fork));
                 differ += !(bt.got[k].finish == want.finish && same_got(bt.got[k], want, want.tokens.size()));
             }
-            expect(differ > 0, "the same with the fork's CPU numerics for the misses (the engine before C05): " +
+            expect(differ > 0, "the same with the fork's CPU numerics for the misses (the default): " +
                                    std::to_string(differ) + " of 4 requests differ from their alone runs (seen)");
         }
         {

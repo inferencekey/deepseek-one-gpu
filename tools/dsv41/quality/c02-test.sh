@@ -220,7 +220,7 @@ check "--serve --dry-run, --hot-homes all: the homes' RAM the gate's (${homes_en
    grep -q "^dry run: hot set reset (--hot-homes all): 40 layers displaced by [0-9]* experts, restored in place layer by layer: [0-9]* swaps, [0-9.]* MiB up and 0.0 down, every layer back at the hot set.s slab with every home its own; 40 events in layer order" "$d/homes-all.err" &&
    grep -q "^READY 262144 stop$" "$d/homes-all.out"'
 check "--serve --dry-run, --hot-homes spare: the two-way path named, its slow idle reset named with the deterministic mode on (not off), the dry reset in rounds with the victims copied down" \
-  'grep -q "^experts: hot set homes: two-way (--hot-homes spare): .*; the deterministic mode is on (--deterministic on), so this idle reset is the slow one: the next request waited 1.67-1.91 s for it on the RTX PRO 6000 (ccache cycle 1, 2026-10-14, 2885-3311 swaps after each 256-token reply); tools/dsv41/pod/e07_gate.py.s gate.json hot_homes is the --hot-homes value this host.s RAM holds$" "$d/homes-spare.err" &&
+  'grep -q "^experts: hot set homes: two-way (--hot-homes spare): .*; the deterministic mode is on (--deterministic on), so this idle reset is the slow one: the next request waited 1.67-1.91 s for it on the RTX PRO 6000 (2026-10-14, 2885-3311 swaps after each 256-token reply); tools/dsv41/pod/e07_gate.py.s gate.json hot_homes is the --hot-homes value this host.s RAM holds$" "$d/homes-spare.err" &&
    grep -q "^experts: hot set homes: two-way (--hot-homes spare): " "$d/homes-spare-off.err" &&
    ! grep -q "this idle reset is the slow one" "$d/homes-spare-off.err" &&
    ! grep -q "^fixed host RAM beside the checkpoints" "$d/homes-spare.err" &&
@@ -389,7 +389,7 @@ check "every pod step of both model paths (14 from the volume, 13 from HF) has i
    grep -q "^  load-alt4-think5 (the same with 5 s between requests, 11 x 5 s more, + 0.2) *3.3  (total [0-9.]*; timeout min(6.6 min, the time left))$" "$tmp/dry.txt" &&
    grep -q "^  load-c4 (chat_load.py, N = 4: 2 turns each, 8 requests one at a time at 14.2 s, + 0.2) *2.1  (total [0-9.]*; timeout min(4.2 min, the time left))$" "$tmp/dry.txt" &&
    grep -q "^  det-sampling (.*  *5  (total [0-9.]*; timeout min(10 min, the time left))$" "$tmp/dry.txt" &&
-   grep -q "^  server-stop (the engine.s shutdown, 49-52 s measured: followup-q 18) *1  (total [0-9.]*; timeout min(2 min, the time left))$" "$tmp/dry.txt" &&
+   grep -q "^  server-stop (the engine.s shutdown, 49-52 s measured) *1  (total [0-9.]*; timeout min(2 min, the time left))$" "$tmp/dry.txt" &&
    grep -q "^  model-download (264.5 GB at 0.25 GB/s, .*18.2  (total [0-9.]*; timeout min(36.4 min, the time left))$" "$tmp/dry.txt"'
 usd="$(sed -n "s/^plan (hf): total .* (about \([0-9.]*\) USD at 2.60 USD\/h)$/\1/p" "$tmp/dry.txt")"
 worst="$(sed -n "s/^plan (hf) with no turn resumed: total \([0-9.]*\) min of the cap 53 min at the limit price (about \([0-9.]*\) USD at 2.60 USD\/h)$/\1 \2/p" "$tmp/dry.txt")"
@@ -500,7 +500,7 @@ check "the engine ran with the gate's placement, prefetch 128, the partial host 
   'python3 -c "import json, sys; a = json.load(open(sys.argv[1]))[\"args\"]
 sys.exit(0 if a[a.index(\"--prefetch-experts\") + 1] == \"128\" and \"--hot-set\" in a and \"--log-ids\" in a and \"--deterministic\" not in a and
          a[a.index(\"--hot-homes\") + 1] == \"5612\" else 1)" "$o/quality-server.json" &&
-   grep -q "^host homes (e07_gate.py, decision-c02 amendments 3c and 3d): the RAM holds 5612 of the slab.s 5951 experts. homes with the margin (94.3%; " "$o/placement.txt" &&
+   grep -q "^host homes (e07_gate.py): the RAM holds 5612 of the slab.s 5951 experts. homes with the margin (94.3%; " "$o/placement.txt" &&
    grep -q "^experts: hot set homes: partial host homes (--hot-homes 5612): 5612 of the slab.s 5951 VRAM experts keep a permanent pinned home (94.3%), 68560.7 MiB: every slab expert in 37 of the 40 layers that swap" "$o/quality-engine.log" &&
    grep -q "^conversation checkpoints: 4 slots of 805.0 MiB" "$o/quality-engine.log" &&
    [[ "$(grep -E "^dsv41-engine serve: request [0-9]+: [0-9]+ prompt tokens, " "$o/quality-engine.log" | head -n 38 | grep -c "; deterministic; greedy$")" == 38 ]]'
@@ -552,14 +552,14 @@ check "the ccache sheet: the session's cost against its cap, item 10's table and
    ! grep -q "^Every turn 2+ over 2 s" "$r" &&
    grep -q "^## The hot set.s homes and the reset" "$r" &&
    grep -q "^Path: .experts: hot set homes: partial host homes (--hot-homes 5612): 5612 of the slab.s 5951 VRAM experts" "$r" &&
-   grep -q "^Gate: host homes (e07_gate.py, decision-c02 amendments 3c and 3d): the RAM holds 5612 of the slab.s 5951 experts. homes with the margin (94.3%; all of them: 258.61 GiB + 8.0 margin against 262.63 GiB, 3.97 GiB short)$" "$r" &&
+   grep -q "^Gate: host homes (e07_gate.py): the RAM holds 5612 of the slab.s 5951 experts. homes with the margin (94.3%; all of them: 258.61 GiB + 8.0 margin against 262.63 GiB, 3.97 GiB short)$" "$r" &&
    grep -q "^(the homes 70.998 GiB; the host RAM with them 258.61 GiB + 8.0 margin against 262.63 GiB, the memory cgroup.s limit)$" "$r" &&
    grep -q "^Homes held: 5612 of the slab.s 5951 experts (94.3%), 66.95 GiB, --hot-homes 5612; partial: layer 37 cut at its last 116 of 142, the layers after it on the two-way path, the RAM with them 254.63 GiB + 8.0 margin$" "$r" &&
    ! grep -q "each at [0-9]* checkpoints" "$r" &&
    grep -q "^- host: its checkpoint slot, 805.0 MiB of pinned host RAM, sized for a full 262144-position conversation and pinned at load (4 slots, 3220.0 MiB in all); a 16K turn.s checkpoint fills [0-9.]* to [0-9.]* MiB of it (median [0-9.]*, the [1-9][0-9]* saves of prompts of 16384 tokens or more)$" "$r" &&
    grep -q "^- device: the live KV (.*) and the in-place carry snapshot ([0-9.]* KiB); " "$r" &&
    grep -q "^| the hot set.s host homes (5612 of the slab.s 5951 experts, --hot-homes 5612; the engine: 68560.7 MiB) | 66.95 |$" "$r" &&
-   grep -q "^| the warm tier ([0-9]* experts, pinned) | [0-9.]* |$" "$r" && grep -q "^| the margin (decision e07 gate) | 8.00 |$" "$r" &&
+   grep -q "^| the warm tier ([0-9]* experts, pinned) | [0-9.]* |$" "$r" && grep -q "^| the margin (e07_gate.py) | 8.00 |$" "$r" &&
    grep -q "^Host RAM the gate placed: 254.63 GiB (the fixed costs above without the margin, plus the 4 checkpoint slots. 3.144 GiB) + 8.0 margin against 262.63 GiB, the memory cgroup.s limit; homes for every slab expert (5951, 70.998 GiB) would need 258.61 GiB + 8.0 margin, 3.97 GiB more than the limit (the gate.s)$" "$r" &&
    grep -q "^The rounds (partial host homes, 3 layers not homed in full): [0-9]* requests after one, [0-9]* swaps, [0-9]* victims copied down" "$r" &&
    grep -q "^Copies down left (host homes held 5612 of 5951): [0-9]* of [0-9]* decode swaps ([0-9.]*%) and [0-9]* of [0-9]* reset swaps ([0-9.]*%) over [0-9]* requests$" "$r" &&

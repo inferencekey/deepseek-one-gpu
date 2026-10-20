@@ -881,7 +881,7 @@ q_payload_sources() {
       rm -f "$n"
       echo "  e07/conversations-long.json: $CLONG_CONVERSATIONS sha256 $sha, chat_load.py build --users $CLONG_USERS --long-context $CLONG_LONG_CONTEXT at HEAD"
     fi
-    (( has_c05 )) && echo "  ($E07_PLAN ships no needle prompts; its lm-eval subsets are src/tools/dsv41/quality/subsets_lean2h_seed20261006.json, Q02's)" ||
+    (( has_c05 )) && echo "  ($E07_PLAN ships no needle prompts; its lm-eval subsets are src/tools/dsv41/quality/subsets_lean2h_seed20261006.json, the reference run's)" ||
       echo "  ($E07_PLAN ships no needle prompts nor lm-eval subsets)"
   else
     n="$(mktemp)"
@@ -1024,7 +1024,7 @@ print(round(round(w / 60 + 0.2, 1) - round(r / 60 + 0.2, 1) + round((w + g) / 60
       python3 -c "print(round(2 * $n * $cbase_req_s / 60 + 0.2, 1))")")
   done
   plan_tail+=("det-sampling (det_sampling_check.py: 26 requests at 8.2 s, the A100's, 213 s, + resets 38 + waits 43 s):5"
-              "server-stop (the engine's shutdown, 49-52 s measured: followup-q 18):1")
+              "server-stop (the engine's shutdown, 49-52 s measured):1")
 elif (( has_cbatch )); then
   # cbase's rates for the 16K load steps, a request read whole at 14.2 s one at a
   # time (the batch's worst case: no speed-up at all; the timeouts 2 x that); the short user's 2 turns of a prompt of
@@ -1041,7 +1041,7 @@ elif (( has_cbatch )); then
   (( has_c05 )) ||
     plan_tail+=("engine-server-off (the FIFO server, gate-off's placement; the engine's ${srv%:*}):${srv##*:}"
                 "load-short-off (chat_load.py, 1 user, a 1K prompt, $CBATCH_SHORT_TURNS turns of 256 at 35.4 tok/s, + 0.2):$short_min"
-                "server-stop-off (the engine's shutdown, 49-52 s measured: followup-q 18):1")
+                "server-stop-off (the engine's shutdown, 49-52 s measured):1")
   plan_tail+=("engine-server (--batch $CBATCH_SLOTS --batch-ctx $CBATCH_CTX --checkpoints $CBATCH_CHECKPOINTS, gate's placement, --log-ids; ${srv%:*}):${srv##*:}")
   if (( has_c05 )); then
     plan_tail+=("load-short (chat_load.py, 1 user, a 1K prompt, $CBATCH_SHORT_TURNS turns of 256 at 35.4 tok/s, + 0.2: item 11's single user):$short_min")
@@ -1090,24 +1090,24 @@ elif (( has_cbatch )); then
         case "$t" in
           gsm8k_cot_llama) m=459 how="459 s measured in the 2026-10-17 cdet session" ;;
           ifeval) m=1042 how="1042 s measured in the 2026-10-17 cdet session" ;;
-          humaneval_instruct) m=359 how="Q02's 359 s one at a time (cut at the cdet session's deadline; ifeval and gsm8k took 0.97 and 0.86 x Q02's there)" ;;
+          humaneval_instruct) m=359 how="the reference run's 359 s one at a time (cut at the cdet session's deadline; ifeval and gsm8k took 0.97 and 0.86 x the reference run's there)" ;;
         esac
       else
         case "$t" in
-          gsm8k_cot_llama) m=531 how="Q02's 531 s in the fork's numerics one at a time; the GPU's 909 s on 2026-10-19 within its timeout" ;;
-          ifeval) m=1077 how="Q02's 1077 s in the fork's numerics one at a time; the GPU's 1521 s on 2026-10-19 within its timeout" ;;
-          humaneval_instruct) m=450 how="Q02's 359 s in the fork's numerics one at a time x 1.25; the GPU's had 162 of 164 at its 720 s cut on 2026-10-19" ;;
+          gsm8k_cot_llama) m=531 how="the reference run's 531 s in the fork's numerics one at a time; the GPU's 909 s on 2026-10-19 within its timeout" ;;
+          ifeval) m=1077 how="the reference run's 1077 s in the fork's numerics one at a time; the GPU's 1521 s on 2026-10-19 within its timeout" ;;
+          humaneval_instruct) m=450 how="the reference run's 359 s in the fork's numerics one at a time x 1.25; the GPU's had 162 of 164 at its 720 s cut on 2026-10-19" ;;
         esac
       fi
       plan_tail+=("lm-eval-$t (NUM_CONCURRENT $CDET_CONCURRENT on the batch slots, $how):$(python3 -c "print(round($m / 60, 1))")")
     done
   fi
-  plan_tail+=("server-stop (the engine's shutdown, 49-52 s measured: followup-q 18):1")
+  plan_tail+=("server-stop (the engine's shutdown, 49-52 s measured):1")
   # the speed A/B's fork arm, last (the step cut first if time runs out)
   (( ! has_cdet )) ||
     plan_tail+=("engine-server-fork (the same server with --cpu-numerics fork; ${srv%:*}):${srv##*:}"
                 "ab-fork (load-short's user, the deterministic mode off, the CPU experts in the fork's numerics):$short_min"
-                "server-stop-fork (the engine's shutdown, 49-52 s measured: followup-q 18):1")
+                "server-stop-fork (the engine's shutdown, 49-52 s measured):1")
 elif [[ "$E07_PLAN" == clong ]]; then
   :   # its steps below, as the combined plan's after cbatch's
 elif [[ "$E07_PLAN" == q* ]]; then
@@ -1185,7 +1185,7 @@ print(round((solo + users) / 60 + 0.2, 1))")"
   plan_tail+=("engine-server$sfx (--batch $CLONG_SLOTS --batch-ctx $CLONG_CTX --checkpoints $CLONG_CHECKPOINTS, the long gate's placement, --log-ids; load ~6 min):6"
               "load-long (chat_load.py long: the 64K prompt alone 25 s, then $CLONG_USERS users and the $long_tokens-token prompt beside them in $long_chunks chunks of $CLONG_CHUNK at a planned 4.65 s, $CLONG_MAX_TOKENS tokens each at 20 tok/s, + 0.2):$long_min"
               "robust (robust_check.py: item 13's eight checks over HTTP, no-max-tokens and slot-room with them):4"
-              "server-stop$sfx (the engine's shutdown, 49-52 s measured: followup-q 18):1")
+              "server-stop$sfx (the engine's shutdown, 49-52 s measured):1")
 fi
 # the second cbatch server last, after items 12 and 13, with cbatch's
 # estimates: the single user with batching on and steady-c<N> on the engine with CBATCH_SPARE spare slots per layer
@@ -1193,7 +1193,7 @@ if (( has_spare )); then
   plan_tail+=("engine-server-spare (--hot-spare $CBATCH_SPARE, gate-spare's placement, --batch $CBATCH_SLOTS --batch-ctx $CBATCH_CTX --checkpoints $CBATCH_CHECKPOINTS, --log-ids; load ~6 min):6"
               "load-short-spare (the single user with batching on, on this engine):$short_min"
               "steady-c$sn-spare (steady-c$sn on this engine):$steady_min"
-              "server-stop-spare (the engine's shutdown, 49-52 s measured: followup-q 18):1")
+              "server-stop-spare (the engine's shutdown, 49-52 s measured):1")
 fi
 download="model-download (264.5 GB, then size and sha256 per file; session 1: 17.4):18"
 # e07b and the Part Q plans: the download at HF_GBS, the sha256 check 0.6 min (2026-10-10:
@@ -1430,7 +1430,7 @@ if g.get('host_homes_of'):
     echo "  qualification:   mapped-memory doorbell round trip median <= $QUALIFY_MAX_DOORBELL_US us (QUALIFY_MAX_DOORBELL_US, 2000 round trips, p99 reported),"
     for g in "${gpus[@]}"; do
       hr="$(qualify_host_read "$g")"
-      echo "  qualification:   16-thread host read >= ${hr%%|*} GB/s on $g (${hr#*|}; decision-harness-port-qualify amendment 1),"
+      echo "  qualification:   16-thread host read >= ${hr%%|*} GB/s on $g (${hr#*|}),"
     done
     echo "  qualification:   SM clock under the read load >= $QUALIFY_MIN_SM_RATIO x the GPU's"
     echo "  qualification:   clocks.max.sm (QUALIFY_MIN_SM_RATIO, nvidia-smi; power draw reported), enforced power limit >= $QUALIFY_MIN_POWER_RATIO x its"
@@ -1813,8 +1813,8 @@ if g.get('host_homes_of'):
         echo "cdet estimates, measured where there are"
         echo "  numbers: each server's load 2.5 min (85-140 s in the cbatch and cdet sessions), det-sampling 3 min (the 2026-10-17"
         echo "  cdet session's 455 s less the 300 s its penalty request waited after the engine's ERR, fixed), each lm-eval task"
-        echo "  as it ran on the batch slots there (ifeval 1042 s, gsm8k 459 s; humaneval, cut at the deadline, Q02's 359 s on"
-        echo "  the FIFO server: the other two took 0.97 and 0.86 x Q02's), det-batch from cbase's rates (the 2.0 s reset, 256"
+        echo "  as it ran on the batch slots there (ifeval 1042 s, gsm8k 459 s; humaneval, cut at the deadline, the reference run's 359 s on"
+        echo "  the FIFO server: the other two took 0.97 and 0.86 x the reference run's), det-batch from cbase's rates (the 2.0 s reset, 256"
         echo "  tokens at 35.4 tok/s alone, 20 a user batched)"
       }
       [[ "$E07_PLAN" != cfinal ]] || {

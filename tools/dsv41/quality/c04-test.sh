@@ -209,7 +209,7 @@ check "a request past --batch-ctx beside a decoding slot says ALONE before its r
 a = next(i for i, x in enumerate(l) if x.startswith(\"ALONE \"))
 p = next(i for i, x in enumerate(l) if x.startswith(\"PP \") and x.split()[2] == \"3\")
 sys.exit(0 if l[a] == \"ALONE 1 1 why=3 prompt tokens and 200 to generate need 202 positions, a batch slot holds 128\" and a < p else 1)" "$d/alone.out" &&
-   grep -q "^dsv41-engine serve: request 2: runs alone on the live sequence, not in batch slot 1: 3 prompt tokens and 200 to generate need 202 positions, a batch slot holds 128 (C04 audit 2); it holds 1 decoding batch slots until its end$" "$d/alone.err" &&
+   grep -q "^dsv41-engine serve: request 2: runs alone on the live sequence, not in batch slot 1: 3 prompt tokens and 200 to generate need 202 positions, a batch slot holds 128; it holds 1 decoding batch slots until its end$" "$d/alone.err" &&
    grep -qE "^dsv41-engine serve: request 2: ran alone on the live sequence, not in batch slot 1: .* holding 1 decoding batch slots for [0-9.]+ ms$" "$d/alone.err" &&
    grep -qE "^BDONE 0 30 length [0-9.]+ rep=1$" "$d/alone.out"'
 grep -E "^(BADM|BDONE) " "$d/flush-open.out" | sed 's/^/  stdin open: /' | cut -c1-200 || true
@@ -343,8 +343,8 @@ check "ran alone: the turn past a slot, alone and moved into a slot by a short r
   'python3 -c "import json, sys; c = [x for x in json.load(open(sys.argv[1]))[\"checks\"] if x[\"check\"] == \"slot-room\"][0]
 r, m = c[\"strata_ran_alone\"] or {}, c[\"alone_seen_in_metrics\"] or {}
 sys.exit(0 if c[\"alone_ok\"] and r.get(\"held_slots\") == 0 == m.get(\"held_slots\") and \"a batch slot holds 69632\" in r.get(\"reason\", \"\") and c[\"short_status\"] == 200 else 1)" "$tmp/chunkdefault/robust.json" &&
-   grep -qE "^dsv41-engine serve: request [0-9]+: runs alone on the live sequence, not in batch slot [0-9]: [0-9]+ prompt tokens and [0-9]+ to generate need [0-9]+ positions, a batch slot holds 69632 \(C04 audit 2\); it holds 0 decoding batch slots until its end$" "$tmp/chunkdefault/engine.log" &&
-   grep -qE "^dsv41-engine serve: request [0-9]+: ran alone on the live sequence, not in batch slot [0-9]: .*, a batch slot holds 69632 \(C04 audit 2\); [0-9]+ generated \((length|stop)\), holding 0 decoding batch slots for [0-9.]+ ms$" "$tmp/chunkdefault/engine.log" &&
+   grep -qE "^dsv41-engine serve: request [0-9]+: runs alone on the live sequence, not in batch slot [0-9]: [0-9]+ prompt tokens and [0-9]+ to generate need [0-9]+ positions, a batch slot holds 69632; it holds 0 decoding batch slots until its end$" "$tmp/chunkdefault/engine.log" &&
+   grep -qE "^dsv41-engine serve: request [0-9]+: ran alone on the live sequence, not in batch slot [0-9]: .*, a batch slot holds 69632; [0-9]+ generated \((length|stop)\), holding 0 decoding batch slots for [0-9.]+ ms$" "$tmp/chunkdefault/engine.log" &&
    grep -q "^\[strata\] batch slot [0-9]: this request runs alone, not in a slot, holding 0 decoding slot(s) until its end: " "$tmp/chunkdefault/server.log"'
 check "the server's log: the cancelled slots freed, the 503 said" \
   'grep -q "^\[strata\] batch slot [0-9]*: its request was cancelled after [0-9]* tokens" "$tmp/chunkdefault/server.log" &&
@@ -548,7 +548,7 @@ sys.exit(0 if a[\"ok\"] and a[\"summary\"][\"gap_pass\"] and b[\"ok\"] else 1)" 
      grep -q "^Item 13: PASS (8 of 8 checks; P = 8 slots, queue_max 8).$" "$r" &&
      grep -q "^Not checked on the real engine here: the per-request deadline" "$r" &&
      grep -q "^A chunk.s read time is the host.s: " "$r" &&
-     grep -qE "^1 request ran alone past a batch slot \(C04 audit 2" "$r" &&
+     grep -qE "^1 request ran alone past a batch slot \(a prompt" "$r" &&
      grep -qE "^\| [0-9]+ \| 4 \| 65565 \| 5 \| 16384 \| 4 \| [0-9.]+ \| [0-9.]+ \| [0-9.]+ \| [0-9.]+ \|$" "$r" &&
      grep -q "^| request | beside slots | tokens read | chunks | chunk | steps between | chunk read ms (mean) | chunk read ms (longest) | ms to its token | longest hold ms (the slots. gap) |$" "$r" &&
      grep -qE "^## Placement: gate(-long)? \(the long prompt.s slots" "$r" && grep -q "^## Machine qualification" "$r" &&
@@ -575,7 +575,7 @@ sys.exit(0 if a[\"ok\"] and a[\"summary\"][\"gap_pass\"] and b[\"ok\"] else 1)" 
        grep -q "^## The batch in the engine.s log (logs/cbatch-quality-engine.log)" "$r" &&
        grep -q "^### Where a batch step.s time goes$" "$r" &&
        grep -qE "^\| 1 \| all \| [0-9]+ \| [0-9.]+ \| " "$r" &&
-       grep -q "^Not in this plan: measured on 2026-10-14 (strata-engine/2026-10-14-cbatch), decision-c04-long-prefill-robustness amendment 2.$" "$r" &&
+       grep -q "^Not in this plan: measured on 2026-10-14 (the cbatch session, see docs/RESULTS.md).$" "$r" &&
        [[ ! -e "$o/det-sampling.json" && ! -e "$o/cbatch/load-c4.json" ]] &&
        [[ -s "$o/cbatch-quality-engine.log" && -s "$o/quality-engine.log" ]] &&
        (( $(grep -n "^## Item 11$" "$r" | cut -d: -f1) < $(grep -n "^## Item 12" "$r" | cut -d: -f1) ))'

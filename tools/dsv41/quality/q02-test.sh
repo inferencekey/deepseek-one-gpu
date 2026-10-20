@@ -165,13 +165,13 @@ rc=0; env E07_PLAN=cycle2 QUALIFY_MIN_HOST_READ_GBS=120 OUT="$tmp/dry-out" bash 
 grep -h "qualification:   16-thread host read" "$tmp/dry-qfork-hf-1.txt" "$tmp/dry-qengine-hf.txt" "$tmp/dry-hostread-override.txt" |
   sed 's/^ */  host read: /'
 check "the dry runs print the host read floor per GPU: qfork's A100s 40, qengine's RTX PRO 6000 250, 120 by hand for all" \
-  'hr="qualification:   16-thread host read >=" am="decision-harness-port-qualify amendment 1),"
-   grep -qx "  $hr 40 GB/s on NVIDIA A100-SXM4-80GB (the A100 default, its hosts measured 40.9-162.2; $am" "$tmp/dry-qfork-hf-1.txt" &&
-   grep -qx "  $hr 40 GB/s on NVIDIA A100 80GB PCIe (the A100 default, its hosts measured 40.9-162.2; $am" "$tmp/dry-qfork-hf-1.txt" &&
+  'hr="qualification:   16-thread host read >=" am="),"
+   grep -qx "  $hr 40 GB/s on NVIDIA A100-SXM4-80GB (the A100 default, its hosts measured 40.9-162.2$am" "$tmp/dry-qfork-hf-1.txt" &&
+   grep -qx "  $hr 40 GB/s on NVIDIA A100 80GB PCIe (the A100 default, its hosts measured 40.9-162.2$am" "$tmp/dry-qfork-hf-1.txt" &&
    (( $(grep -c "$hr" "$tmp/dry-qfork-hf-1.txt") == 2 )) &&
-   grep -q "^  $hr 250 GB/s on NVIDIA RTX PRO 6000 Blackwell .*(the default for any GPU but the A100, the RTX PRO 6000.s good hosts measured 341.8-545.4; $am$" "$tmp/dry-qengine-hf.txt" &&
+   grep -q "^  $hr 250 GB/s on NVIDIA RTX PRO 6000 Blackwell .*(the default for any GPU but the A100, the RTX PRO 6000.s good hosts measured 341.8-545.4$am$" "$tmp/dry-qengine-hf.txt" &&
    ! grep "$hr" "$tmp/dry-qengine-hf.txt" | grep -qv " 250 GB/s on NVIDIA RTX PRO 6000 " &&
-   (( rc == 0 )) && (( $(grep -c "$hr 120 GB/s on .*(QUALIFY_MIN_HOST_READ_GBS, set by hand; $am" "$tmp/dry-hostread-override.txt") == 4 )) &&
+   (( rc == 0 )) && (( $(grep -c "$hr 120 GB/s on .*(QUALIFY_MIN_HOST_READ_GBS, set by hand$am" "$tmp/dry-hostread-override.txt") == 4 )) &&
    ! grep "$hr" "$tmp/dry-hostread-override.txt" | grep -qv " 120 GB/s "'
 wait "${jobs_[@]}"
 jobs_=()

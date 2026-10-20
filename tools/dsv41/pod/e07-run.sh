@@ -356,7 +356,7 @@ echo "engine runs bound with: ${NUMA[*]:-nothing}; placement: $shown" > out/plac
 printf '%s\n' "${NUMA_BIND_LOG[@]}" | tee -a out/env.log >> out/placement.txt
 # the CPUs the engine's 16 pool threads run on, the affinity it inherits under the same binding
 echo "engine pool threads (--threads 16) run on CPUs $("${NUMA[@]}" grep Cpus_allowed_list /proc/self/status | cut -f2) (bound with: ${NUMA[*]:-nothing})" >> out/env.log
-[[ -z "${HOMES_WHY:-}" ]] || echo "host homes (e07_gate.py, decision-c02 amendments 3c and 3d): $HOMES_WHY" >> out/placement.txt
+[[ -z "${HOMES_WHY:-}" ]] || echo "host homes (e07_gate.py): $HOMES_WHY" >> out/placement.txt
 echo "plan: $PLAN, readers: $READERS" > out/plan.log
 
 if [[ -n "$POD_VOLUME" ]]; then

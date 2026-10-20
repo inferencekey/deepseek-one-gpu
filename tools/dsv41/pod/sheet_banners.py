@@ -102,7 +102,7 @@ VERDICTS = [
      "evidence": ["| gsm8k_cot_llama | 150 | 0.927 | 0.927 | +0.000 | [-0.027, +0.027] |",
                   "| ifeval | 150 | 0.800 | 0.800 | +0.000 | [-0.040, +0.040] |",
                   "| humaneval_instruct | 164 | 0.890 | 0.866 | -0.024 | [-0.049, -0.006] |",
-                  "item 4 against Q02's engine run FAIL: humaneval_instruct: diff -0.024, 95% CI [-0.049, -0.006], "
+                  "item 4 against the reference engine run FAIL: humaneval_instruct: diff -0.024, 95% CI [-0.049, -0.006], "
                   "the interval lies below zero"],
      "superseded": C05_SPEED + C05_NO_RUN},
 ]

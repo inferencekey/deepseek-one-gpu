@@ -1280,7 +1280,7 @@ the slot's end, decoding beside the others ([docs/DETAILS.md](../../../docs/DETA
 slots). A request longer than a slot (its prompt, or an explicit `max_tokens`, past the slot's positions) still runs
 alone on the live sequence and holds the batch while it does: its read is interleaved as any other, but from its first
 token to its last no slot steps. It is visible: the engine's stderr line "request N: ran alone on the live sequence,
-not in batch slot S: <why> (C04 audit 2); G generated (finish), holding K decoding batch slots for X ms" and its
+not in batch slot S: <why>; G generated (finish), holding K decoding batch slots for X ms" and its
 `BADM <slot> 0 rep=R alone=K why=<why>`; the server logs it and adds `"strata_ran_alone": {"reason": ...,
 "held_slots": K}` to the reply (the last streamed chunk, the non-streamed body); `e07_report.py` lists them on the
 sheet. `quality/robust_check.py`'s no-max-tokens check runs both on the real engine (4 users decoding and a count
