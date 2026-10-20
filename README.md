@@ -280,7 +280,8 @@ to `deepseek.json` (or set `STRATA_API_KEY`); clients then send it as a Bearer t
 [InferenceKey](https://inferencekey.com) can run this engine on **your own worker** as a custom backend: you publish
 it once with the InferenceKey SDK, pin a workload to your GPU box, and call it from anywhere through an
 OpenAI-compatible endpoint with API keys, while the model and its weights stay on your machine. Everything is in
-[integrations/inferencekey](integrations/inferencekey/README.md).
+[integrations/inferencekey](integrations/inferencekey/README.md), and the InferenceKey docs walk through it step by
+step in [DeepSeek-V4.1-Flash on one 96 GB GPU](https://docs.inferencekey.com/en/guides/deepseek-v41-flash-one-gpu/).
 
 <p align="center"><img src="assets/inferencekey-flow.svg" width="100%" alt="Your laptop runs publish.py and main.py with the InferenceKey SDK. InferenceKey stores the custom backend, pins the workload to your private worker and exposes an OpenAI-compatible endpoint. The worker's RTX PRO 6000 and CPU compute the reply. Measured on this engine: 63.11 tok/s for 1 user, 127.58 tok/s for 4 users at once."></p>
 
@@ -338,8 +339,8 @@ against 63.11 tok/s for one ([docs/RESULTS.md](docs/RESULTS.md), RTX PRO 6000 Bl
 
 Things to know about custom backends today: the reply's message content is the backend's JSON object
 (`{text, reasoning, finish_reason, usage, timings}`), and the response's own `usage` is zero (the real counts are
-inside the object); streaming is not supported yet; each request has 300 s on the worker, so the backend caps
-`max_tokens` at 4,096 by default; tool calls are refused, as by the server itself. The screenshots are of the
+inside the object); streaming is not supported yet; each request has 300 s on the worker, so the backend uses
+`max_tokens` 4,096 when the request sets none; tool calls are refused, as by the server itself. The screenshots are of the
 InferenceKey dashboard; the speed, quality and cost figures in this README come from the runs in
 [docs/RESULTS.md](docs/RESULTS.md).
 

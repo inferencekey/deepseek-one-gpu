@@ -6,6 +6,8 @@ with the InferenceKey SDK, pin a workload to your own worker (one RTX PRO 6000
 96 GB), and call it from anywhere with the official `openai` client through an
 OpenAI-compatible InferenceKey endpoint. The model and its weights stay on your
 machine; InferenceKey gives you the endpoint, the API keys and the dashboard.
+The InferenceKey docs have the same setup as a step-by-step guide:
+[DeepSeek-V4.1-Flash on one 96 GB GPU](https://docs.inferencekey.com/en/guides/deepseek-v41-flash-one-gpu/).
 
 <p align="center"><img src="../../assets/inferencekey-flow.svg" width="100%" alt="Your laptop runs publish.py and main.py with the InferenceKey SDK. InferenceKey stores the custom backend, pins the workload to your private worker and exposes an OpenAI-compatible endpoint. The worker's RTX PRO 6000 and CPU compute the reply. Measured on this engine: 63.11 tok/s for 1 user, 127.58 tok/s for 4 users at once."></p>
 
@@ -128,8 +130,8 @@ GPU's NUMA node.
   decode it as above (`main.py` does). The real token counts and speeds are
   inside it (`usage`, `timings`): the response's own `usage` is zero.
 - **No streaming yet** for custom backends (`"stream": true`).
-- **Each request has 300 s** on the worker. The backend caps `max_tokens` at
-  4,096 by default (about 215 s at the 19 tok/s of a user among 8); ask for
+- **Each request has 300 s** on the worker. When a request sets no `max_tokens`,
+  the backend uses 4,096 (about 215 s at the 19 tok/s of a user among 8); ask for
   less, or more when you run alone.
 - **No tool calls.** A request with `tools` is refused with 400, as the
   server does (README, "Limitations").
