@@ -63,3 +63,7 @@ build-vision-cuda12.bat
 /.rocm-win/
 build/
 build-*/
+
+# written by run.sh (README, Run it): the placement and the server configuration of this machine
+/placement/
+/deepseek.json
