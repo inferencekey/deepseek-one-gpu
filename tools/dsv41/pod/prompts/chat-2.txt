@@ -1,0 +1,1 @@
+My team keeps missing sprint deadlines because tickets turn out bigger than estimated. We are five developers and one designer. What would you try first, and how would we know after a month whether it worked?

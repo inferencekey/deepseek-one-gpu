@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc" font-family="system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif">
+<title id="title">Cost per million generated tokens</title>
+<desc id="desc">DeepSeek API output price: 0.60 USD off-peak, 1.20 USD peak per million tokens. Self-hosted on a rented RTX PRO 6000 at 2.49 USD/h: 4.53 with 8 users, 5.42 with 4 users, 7.28 with 4 users including 16K prompt reads, 10.96 with one user.</desc>
+<style>
+.bg{fill:#ffffff;stroke:#d0d7de}
+.panel{fill:#f6f8fa;stroke:#d0d7de}
+.t{fill:#1f2328}
+.m{fill:#59636e}
+.f{fill:#818b98}
+.line{stroke:#d0d7de}
+.grid{stroke:#eaeef2}
+.gpu{fill:#1a7f37}.gpus{stroke:#1a7f37}.gpuw{fill:#dafbe1}
+.cpu{fill:#0969da}.cpus{stroke:#0969da}.cpuw{fill:#ddf4ff}
+.amb{fill:#9a6700}.ambs{stroke:#9a6700}.ambw{fill:#fff8c5}
+.api{fill:#8250df}.apis{stroke:#8250df}.apiw{fill:#fbefff}
+.cover{fill:#f6f8fa}
+@media (prefers-color-scheme: dark){
+.bg{fill:#0d1117;stroke:#30363d}
+.panel{fill:#161b22;stroke:#30363d}
+.t{fill:#e6edf3}
+.m{fill:#9198a1}
+.f{fill:#6e7681}
+.line{stroke:#30363d}
+.grid{stroke:#21262d}
+.gpu{fill:#3fb950}.gpus{stroke:#3fb950}.gpuw{fill:#0f2d1a}
+.cpu{fill:#4493f8}.cpus{stroke:#4493f8}.cpuw{fill:#0c2440}
+.amb{fill:#d29922}.ambs{stroke:#d29922}.ambw{fill:#2e2306}
+.api{fill:#ab7df8}.apis{stroke:#ab7df8}.apiw{fill:#2a1a45}
+.cover{fill:#161b22}
+}
+
+.bar{transform-box:fill-box;transform-origin:0 50%;animation:grow 1.3s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.lab{animation:fade .6s ease-out both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}</style>
+<rect class="bg" x="0.5" y="0.5" width="1199" height="559" rx="16"/>
+<text x="40" y="46" class="t" font-size="22" font-weight="800">What a million generated tokens costs, in USD</text>
+<text x="40" y="72" class="m" font-size="15">Per token, the DeepSeek API is several times cheaper. Self-hosting pays off for other reasons (see COST.md).</text>
+<line class="grid" x1="400.0" y1="100" x2="400.0" y2="456" stroke-width="1"/>
+<text x="400.0" y="474" class="f" font-size="13" text-anchor="middle">0</text>
+<line class="grid" x1="520.0" y1="100" x2="520.0" y2="456" stroke-width="1"/>
+<text x="520.0" y="474" class="f" font-size="13" text-anchor="middle">2</text>
+<line class="grid" x1="640.0" y1="100" x2="640.0" y2="456" stroke-width="1"/>
+<text x="640.0" y="474" class="f" font-size="13" text-anchor="middle">4</text>
+<line class="grid" x1="760.0" y1="100" x2="760.0" y2="456" stroke-width="1"/>
+<text x="760.0" y="474" class="f" font-size="13" text-anchor="middle">6</text>
+<line class="grid" x1="880.0" y1="100" x2="880.0" y2="456" stroke-width="1"/>
+<text x="880.0" y="474" class="f" font-size="13" text-anchor="middle">8</text>
+<line class="grid" x1="1000.0" y1="100" x2="1000.0" y2="456" stroke-width="1"/>
+<text x="1000.0" y="474" class="f" font-size="13" text-anchor="middle">10</text>
+<line class="grid" x1="1120.0" y1="100" x2="1120.0" y2="456" stroke-width="1"/>
+<text x="1120.0" y="474" class="f" font-size="13" text-anchor="middle">12</text>
+<text x="40" y="130" class="t" font-size="15" font-weight="700">DeepSeek API, off-peak</text>
+<text x="40" y="149" class="m" font-size="13">output price</text>
+<rect class="api bar" style="animation-delay:0.15s" x="400" y="116" width="36.0" height="34" rx="6"/>
+<text class="t lab" style="animation-delay:1.05s" x="446.0" y="140" font-size="17" font-weight="800">0.60</text>
+<text x="40" y="188" class="t" font-size="15" font-weight="700">DeepSeek API, peak hours</text>
+<text x="40" y="207" class="m" font-size="13">output price</text>
+<rect class="api bar" style="animation-delay:0.30s" x="400" y="174" width="72.0" height="34" rx="6"/>
+<text class="t lab" style="animation-delay:1.20s" x="482.0" y="198" font-size="17" font-weight="800">1.20</text>
+<text x="40" y="246" class="t" font-size="15" font-weight="700">Self-hosted, 8 users at once</text>
+<text x="40" y="265" class="m" font-size="13">152.53 tok/s</text>
+<rect class="gpu bar" style="animation-delay:0.45s" x="400" y="232" width="271.8" height="34" rx="6"/>
+<text class="t lab" style="animation-delay:1.35s" x="681.8" y="256" font-size="17" font-weight="800">4.53</text>
+<text x="40" y="304" class="t" font-size="15" font-weight="700">Self-hosted, 4 users at once</text>
+<text x="40" y="323" class="m" font-size="13">127.58 tok/s</text>
+<rect class="gpu bar" style="animation-delay:0.60s" x="400" y="290" width="325.2" height="34" rx="6"/>
+<text class="t lab" style="animation-delay:1.50s" x="735.2" y="314" font-size="17" font-weight="800">5.42</text>
+<text x="40" y="362" class="t" font-size="15" font-weight="700">Self-hosted, 4 users, prompts included</text>
+<text x="40" y="381" class="m" font-size="13">95.03 tok/s, 16K prompts</text>
+<rect class="gpu bar" style="animation-delay:0.75s" x="400" y="348" width="436.8" height="34" rx="6"/>
+<text class="t lab" style="animation-delay:1.65s" x="846.8" y="372" font-size="17" font-weight="800">7.28</text>
+<text x="40" y="420" class="t" font-size="15" font-weight="700">Self-hosted, 1 user</text>
+<text x="40" y="439" class="m" font-size="13">63.11 tok/s</text>
+<rect class="gpu bar" style="animation-delay:0.90s" x="400" y="406" width="657.6" height="34" rx="6"/>
+<text class="t lab" style="animation-delay:1.80s" x="1067.6" y="430" font-size="17" font-weight="800">10.96</text>
+<line class="line" x1="400" y1="100" x2="400" y2="456" stroke-width="1.5"/>
+<text x="40" y="504" class="f" font-size="13">API: api-docs.deepseek.com pricing for deepseek-flash, fetched 2026-10-20; input tokens are billed on top (0.15 / 0.30 per 1M on a cache miss).</text>
+<text x="40" y="524" class="f" font-size="13">Self-hosted: a rented RTX PRO 6000 Blackwell Server Edition at 2.49 USD/h (RunPod, the measured pod; prices change), busy 100% of the time.</text>
+<text x="40" y="544" class="f" font-size="13">Idle time raises the self-hosted cost per token in proportion. Disk and pod start-up are not counted.</text>
+</svg>

@@ -1,0 +1,226 @@
+The quick brown fox jumps over the lazy dog.
+Large language models predict the next token from the previous ones.
+She sells sea shells by the sea shore, and the shells she sells are sea shells for sure.
+In 1969, Apollo 11 landed on the Moon; Neil Armstrong stepped out first.
+Please summarize the following document in three bullet points.
+What is the capital of Australia? Canberra, not Sydney.
+A prefix cache keeps the state of the last request and resumes from it.
+Hyper-connections mix four residual streams per layer.
+The server streams tokens as server-sent events over HTTP/1.1.
+Mixture-of-experts layers route each token to six of 384 experts.
+Why? Because the window ring would be overwritten after 16,384 positions.
+Hello, world!
+hello world
+HELLO WORLD
+Hello   World
+hello	world
+Once upon a time, there was a tokenizer that split text into pieces.
+e.g. i.e. etc. vs. Mr. Mrs. Dr. St.
+Q: Is it raining? A: No, it's sunny.
+The ratio of 4:1 compresses four positions into one row.
+I'm
+you're
+he's
+we'll
+they'd
+I've
+don't
+CAN'T
+IT'S
+Y'ALL'D'VE
+rock'n'roll
+O'Brien's dog's bone
+'quoted' and "double quoted"
+1
+12
+123
+1234
+12345
+1234567890
+3.14159265358979
+-42
++7
+1,000,000
+2026-10-08T09:30:00Z
++34 600 123 456
+0x7fffffff
+1e-20
+abc123def456
+v4.1
+10%
+$19.99
+1st 2nd 3rd 4th
+123456789012345678901234567890
+def f(x):
+    return x * 2  # double it
+for (int i = 0; i < n; ++i) { sum += a[i]; }
+#include <cstdio>
+std::vector<int32_t> ids = {1, 2, 3};
+if (a && b || !c) return -1;
+x = [i**2 for i in range(10) if i % 2 == 0]
+console.log(`value: ${v}`);
+{"model": "deepseek-v4.1-flash", "stream": true, "max_tokens": 64}
+SELECT name, COUNT(*) FROM users WHERE age >= 18 GROUP BY name;
+curl -s http://127.0.0.1:8095/v1/chat/completions -H 'Content-Type: application/json'
+git commit -m 'dsv41/engine: the prefix cache'
+a -> b => c <= d >= e != f == g
+fn main() { println!("{}", 42); }
+<div class="row"><span>text</span></div>
+__init__ __name__ == '__main__'
+lambda x, y: x @ y
+#!/usr/bin/env bash
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+__global__ void k(float* __restrict__ p) {}
+a=1;b=2;c=a+b
+while(true){}
+  indented two
+        indented eight
+	indented tab
+ leading space
+trailing space 
+   three leading
+two  spaces  between
+tab	and	tabs
+ non breaking spaces
+ideographic　space
+thin space
+en space
+line separator
+paragraph separator
+zero​width
+ 
+     
+mixed 	   　 whitespace
+你好，世界！
+我们今天去公园散步。
+大型语言模型的推理速度很重要。
+中华人民共和国
+汉字和标点符号：，。？！
+这是一个测试句子，用于检查分词器。
+深度求索
+上下文长度为二十六万二千一百四十四
+一二三四五六七八九十
+春眠不觉晓，处处闻啼鸟。
+龘龖
+数字123和汉字混合
+繁體中文的句子
+（括号）【方括号】《书名号》
+中文English混合
+こんにちは、世界！
+カタカナとひらがなと漢字
+東京は日本の首都です。
+ラーメンを食べたい
+ゎゐゑをん
+ヴァイオリン
+ー長音符ー
+日本語のテキスト、句読点。
+ｱｲｳｴｵ半角カナ
+ひらがなだけのぶん
+안녕하세요, 세계!
+한국어 문장입니다.
+대한민국 서울
+ㄱㄴㄷㄹ 자모
+한글과 漢字 혼용
+감사합니다
+프리픽스 캐시
+토크나이저 테스트
+مرحبا بالعالم
+اللغة العربية جميلة
+שלום עולם
+Привет, мир!
+Съешь же ещё этих мягких французских булок.
+Γειά σου Κόσμε
+नमस्ते दुनिया
+สวัสดีชาวโลก
+გამარჯობა მსოფლიო
+Բարեւ աշխարհ
+வணக்கம் உலகம்
+ওহে বিশ্ব
+Xin chào thế giới
+Zürich Straße Ärger Öl Übung
+façade naïve coöperate déjà vu
+😀
+😀😃😄😁
+👍🏽
+👨‍👩‍👧‍👦
+🇪🇸🇺🇸🇯🇵
+🫨🪿🫎
+❤️
+🏳️‍🌈
+smile 😀 now
+🚀 launch at 09:00 🚀
+☕️ and 🍰
+🤖🧠💡
+é
+é́́
+à ô ü
+Tiếng Việt có dấu
+Z͑ͤa͑͆l͆g͐o
+ñ vs ñ
+क्ष
+combining̶strike
+!!!
+???
+...
+…
+--
+– an en dash –
+***bold***
+~~~
+((()))
+[[]]
+{{}}
+∑ ∫ √ ∞ ≈ ≠
+€ 12, £ 9, ¥ 300, ₹ 50
+← ↑ → ↓
+© ® ™
+@#$%^&*
+<<>>
+|pipe|
+a/b\c
+¿Qué? ¡Sí!
+「引用」
+<｜User｜>Hello<｜Assistant｜></think>Hi there!<｜end▁of▁sentence｜>
+<｜begin▁of▁sentence｜>You are a helpful assistant.<｜User｜>2+2?<｜Assistant｜><think>
+<think>Let me think about it.</think>The answer is 4.
+</think>
+<think>
+｜DSML｜
+<｜DSML｜tool_calls>
+<dsml:invoke name="f">
+</dsml:invoke>
+<｜User
+｜User｜>
+<｜User｜><｜User｜>
+<｜place▁holder▁no▁7｜>
+<｜fim▁begin｜>def<｜fim▁hole｜>pass<｜fim▁end｜>
+<|im_start|>user hi<|im_end|>
+<|EOT|>
+<｜tool▁calls▁begin｜><｜tool▁call▁begin｜>
+text<think>inside</think>text
+<｜System｜>system prompt
+<tool_result>ok</tool_result>
+<｜▁pad▁｜>
+<｜end▁of▁sentence｜><｜end▁of▁sentence｜>
+https://huggingface.co/vcruz305/DeepSeek-V4.1-Flash-GGUF
+mailto:someone@example.com
+/home/user/Strata/serve/server.py
+C:\Users\name\Documents\file.txt
+# Heading
+## Subheading
+- item one
+1. first item
+> a quote
+| col1 | col2 |
+[link](https://example.org/path?q=1&r=2#frag)
+**bold** _italic_ `code`
+ control
+delchar
+ separators
+bell
+formfeed
+A long mixed line: The engine (DeepSeek-V4.1-Flash, 384 experts) reads 16,384 tokens in ~1.7 s; 中文 text, 日本語, 한국어, emoji 🚀, math ∑x², code `x += 1`, a URL https://example.com/a?b=c, and <think>specials</think> together.
+Repeated tokens: the the the the the the the the the the the the the the the the
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+0000000000000000000000000000000000000000
+一丁丂七丄丅丆万丈三上下丌不与丏丐丑丒专且丕世丗丘丙业丛东丝丞丟丠両丢丣两严並丧丨丩个丫丬中丮丯丰丱串丳临丵丶丷丸丹为主丼丽举丿

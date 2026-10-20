@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="340" viewBox="0 0 1200 340" role="img" aria-labelledby="title desc" font-family="system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif">
+<title id="title">deepseek-one-gpu</title>
+<desc id="desc">DeepSeek-V4.1-Flash served from one 96 GB RTX PRO 6000 plus host RAM: 63.11 tok/s for one user, 127.58 tok/s for 4 users, 152.53 tok/s for 8 users. Hot experts live in VRAM and swap with the experts in host RAM.</desc>
+<style>
+.bg{fill:#ffffff;stroke:#d0d7de}
+.panel{fill:#f6f8fa;stroke:#d0d7de}
+.t{fill:#1f2328}
+.m{fill:#59636e}
+.f{fill:#818b98}
+.line{stroke:#d0d7de}
+.grid{stroke:#eaeef2}
+.gpu{fill:#1a7f37}.gpus{stroke:#1a7f37}.gpuw{fill:#dafbe1}
+.cpu{fill:#0969da}.cpus{stroke:#0969da}.cpuw{fill:#ddf4ff}
+.amb{fill:#9a6700}.ambs{stroke:#9a6700}.ambw{fill:#fff8c5}
+.api{fill:#8250df}.apis{stroke:#8250df}.apiw{fill:#fbefff}
+.cover{fill:#f6f8fa}
+@media (prefers-color-scheme: dark){
+.bg{fill:#0d1117;stroke:#30363d}
+.panel{fill:#161b22;stroke:#30363d}
+.t{fill:#e6edf3}
+.m{fill:#9198a1}
+.f{fill:#6e7681}
+.line{stroke:#30363d}
+.grid{stroke:#21262d}
+.gpu{fill:#3fb950}.gpus{stroke:#3fb950}.gpuw{fill:#0f2d1a}
+.cpu{fill:#4493f8}.cpus{stroke:#4493f8}.cpuw{fill:#0c2440}
+.amb{fill:#d29922}.ambs{stroke:#d29922}.ambw{fill:#2e2306}
+.api{fill:#ab7df8}.apis{stroke:#ab7df8}.apiw{fill:#2a1a45}
+.cover{fill:#161b22}
+}
+
+.in{animation:up .9s ease-out both}
+.d1{animation-delay:.15s}.d2{animation-delay:.35s}.d3{animation-delay:.55s}
+.d4{animation-delay:.8s}.d5{animation-delay:.95s}.d6{animation-delay:1.1s}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.tw{animation:tw 4s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:1}50%{opacity:.45}}
+.flow{stroke-dasharray:6 8;animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-28}}
+.sa{transform:translate(0px,-70px);animation:sa 6s ease-in-out infinite}
+@keyframes sa{0%,15%{transform:none}45%,90%{transform:translate(0px,-70px)}100%{transform:translate(0px,-70px)}}
+.saf{animation:saf 6s ease-in-out infinite}
+@keyframes saf{0%,15%{fill:#9a6700}45%,100%{fill:#1a7f37}}
+.sb{transform:translate(0px,70px);animation:sb 6s ease-in-out infinite}
+@keyframes sb{0%,15%{transform:none}45%,100%{transform:translate(0px,70px)}}
+.sbf{opacity:.55;animation:sbf 6s ease-in-out infinite}
+@keyframes sbf{0%,15%{fill:#1a7f37;opacity:1}45%,100%{fill:#0969da;opacity:.55}}
+@media (prefers-color-scheme: dark){
+@keyframes saf{0%,15%{fill:#d29922}45%,100%{fill:#3fb950}}
+@keyframes sbf{0%,15%{fill:#3fb950;opacity:1}45%,100%{fill:#4493f8;opacity:.55}}
+}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}</style>
+<rect class="bg" x="0.5" y="0.5" width="1199" height="339" rx="16"/>
+<g class="in d1"><text x="60" y="78" class="gpu" font-size="15" font-weight="700" letter-spacing="3">INFERENCEKEY  ·  OPEN SOURCE  ·  MIT</text></g>
+<g class="in d2"><text x="56" y="150" class="t" font-size="66" font-weight="800" letter-spacing="-1.5">deepseek-one-gpu</text></g>
+<g class="in d3"><text x="60" y="196" class="t" font-size="23">DeepSeek-V4.1-Flash (763B MoE, Q2_K) served from</text><text x="60" y="226" class="t" font-size="23">one 96 GB RTX PRO 6000 plus host RAM</text></g>
+<g class="in d4"><rect class="panel" x="60" y="252" width="214" height="50" rx="10"/><text x="76" y="284" class="gpu" font-size="21" font-weight="800">63.11</text><text x="146" y="283" class="m" font-size="15">tok/s, 1 user</text></g>
+<g class="in d5"><rect class="panel" x="288" y="252" width="214" height="50" rx="10"/><text x="304" y="284" class="gpu" font-size="21" font-weight="800">127.58</text><text x="386" y="283" class="m" font-size="15">tok/s, 4 users</text></g>
+<g class="in d6"><rect class="panel" x="516" y="252" width="214" height="50" rx="10"/><text x="532" y="284" class="gpu" font-size="21" font-weight="800">152.53</text><text x="614" y="283" class="m" font-size="15">tok/s, 8 users</text></g>
+<rect class="panel" x="800" y="32" width="340" height="122" rx="12"/>
+<text x="818" y="58" class="t" font-size="14" font-weight="700">GPU VRAM</text><text x="902" y="58" class="m" font-size="14">hot experts + attention</text>
+<rect class="panel" x="800" y="182" width="340" height="122" rx="12"/>
+<text x="818" y="292" class="t" font-size="14" font-weight="700">HOST RAM</text><text x="902" y="292" class="m" font-size="14">other experts, run on the CPU</text>
+<text x="818" y="173" class="m" font-size="13">PCIe: experts swap in and out</text>
+<rect class="gpu tw" style="animation-delay:0.00s" x="826" y="68" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:2.45s" x="855" y="68" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:1.05s" x="884" y="68" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:3.50s" x="913" y="68" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:2.10s" x="942" y="68" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:0.70s" x="971" y="68" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:3.15s" x="1000" y="68" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:1.75s" x="1029" y="68" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:0.35s" x="1058" y="68" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:2.80s" x="1087" y="68" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:1.05s" x="826" y="97" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:3.50s" x="855" y="97" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:2.10s" x="884" y="97" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:0.70s" x="913" y="97" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:3.15s" x="942" y="97" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:1.75s" x="971" y="97" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:0.35s" x="1000" y="97" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:2.80s" x="1029" y="97" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:1.40s" x="1058" y="97" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:0.00s" x="1087" y="97" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:2.10s" x="826" y="126" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:0.70s" x="855" y="126" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:3.15s" x="884" y="126" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:1.75s" x="913" y="126" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:0.35s" x="942" y="126" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:2.80s" x="971" y="126" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:1.40s" x="1000" y="126" width="22" height="22" rx="4"/>
+<rect class="gpu tw" style="animation-delay:2.45s" x="1058" y="126" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="826" y="196" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="855" y="196" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="884" y="196" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="913" y="196" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="942" y="196" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="971" y="196" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="1000" y="196" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="1058" y="196" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="826" y="225" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="855" y="225" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="884" y="225" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="913" y="225" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="942" y="225" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="971" y="225" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="1000" y="225" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="1029" y="225" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="1058" y="225" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="1087" y="225" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="826" y="254" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="855" y="254" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="884" y="254" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="913" y="254" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="942" y="254" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="971" y="254" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="1000" y="254" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="1029" y="254" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="1058" y="254" width="22" height="22" rx="4"/>
+<rect class="cpu" opacity="0.55" x="1087" y="254" width="22" height="22" rx="4"/>
+<g class="sb"><rect class="cpu sbf" x="1087" y="126" width="22" height="22" rx="4"/></g>
+<g class="sa"><rect class="gpu saf" x="1029" y="196" width="22" height="22" rx="4"/></g>
+</svg>

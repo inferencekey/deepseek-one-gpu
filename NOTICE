@@ -1,0 +1,30 @@
+This repository contains a DeepSeek-V4.1-Flash inference engine built on third-party work.
+
+Strata
+  Upstream: https://github.com/Niko1221/Strata, commit 1735d64
+  Copyright (c) 2026 Niko1221 and the Strata contributors
+  License: MIT (see LICENSE)
+  Everything outside the DeepSeek-V4.1 parts comes from upstream Strata: the MoE offload engine (src/, include/,
+  sycl/), the server and web app (serve/), the installer (setup.py, setup.sh, the .bat launchers), the tools and
+  the docs. The upstream README is kept as docs/STRATA.md. The DeepSeek-V4.1 parts are src/dsv41/,
+  include/strata/dsv41/, tools/dsv41/, tests/dsv41/, third_party/llama-dsv41/ and the deepseek-v4.1 support in
+  serve/.
+
+llama.cpp / ggml
+  https://github.com/ggml-org/llama.cpp
+  Copyright (c) 2023-2026 The ggml authors
+  License: MIT (third_party/ggml/LICENSE)
+  third_party/ggml/ holds ggml headers (version in third_party/ggml/VERSION.txt).
+
+vcruz305/llama.cpp (DeepSeek-V4.1 support for llama.cpp)
+  https://github.com/vcruz305/llama.cpp, branch runtime/deepseek41, base commit
+  5210c7c5ed61dddaee6ed476623abf4b63093d16
+  License: MIT (as llama.cpp)
+  third_party/llama-dsv41/0001-strata-moe-hook.patch is one commit on top of that base (see
+  third_party/llama-dsv41/README.md). The fork is the reference the engine is checked against and the build
+  dependency of the tools in tools/dsv41/.
+
+DeepSeek-V4.1-Flash GGUF weights
+  https://huggingface.co/vcruz305/DeepSeek-V4.1-Flash-GGUF
+  The model files are not part of this repository; they are downloaded from that repository under its own
+  license and the DeepSeek-V4.1-Flash model license.

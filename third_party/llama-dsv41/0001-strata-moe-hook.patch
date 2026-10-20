@@ -1,0 +1,210 @@
+From b4d9cb12fef6e47f171cdc9588ff4ee4c6c33c93 Mon Sep 17 00:00:00 2001
+From: Strata DeepSeek-V4.1 port <noreply@example.invalid>
+Date: Tue, 6 Oct 2026 12:54:12 +0000
+Subject: [PATCH] llama-graph: LLAMA_STRATA_MOE=1 hands the routed experts to
+ libstrata-moe
+
+With LLAMA_STRATA_MOE=1, build_moe_ffn builds one ggml custom op after the
+final routing weights in place of the stock expert path (mul_mat_id up and
+gate, SwiGLU or the DeepSeek SwiGLU clamp, mul_mat_id down, times the
+weights, the slot views summed). Its sources are cur, the selected experts
+and weights (viewed to n_expert_used(il) slots, as the stock sum is) and the
+up, gate and down expert tensors. The op function, strata_moe_forward, comes
+from libstrata-moe.so, built from the Strata repo against this build's
+libggml-base, so it is loaded with dlopen at first use (found next to
+libllama through RUNPATH $ORIGIN). The output keeps the ffn_moe_out name.
+
+The clamp limit (0 for plain SwiGLU) is an f32 value in the op's last
+op_params slot, after ggml's custom-op params, and the userdata is null.
+The graph context's hparams is the llm_graph_params copy on
+process_ubatch's stack, so a pointer into it dangles as soon as llama.cpp
+reuses the graph from another call; a value in the op lives with the graph.
+
+Unset, empty or 0 builds the stock graph unchanged; any other value aborts.
+MoE layers the op cannot compute (merged gate_up, biases, scales, another
+activation, LoRA on the experts) and expert tensors outside host memory
+(CPU_REPACK: --no-repack) abort naming the layer or tensor.
+
+ggml-cuda: 64-bit element indices in the unary kernels and reduce_rows.
+The DeepSeek-V4.1 indexer scores (build_indexer_top_k) are one f32 tensor
+of ctx x ubatch x 32 elements (32 indexer heads), and the chain after the
+score mul_mat runs cont, relu, mul, sum_rows on it. unary_cuda took the
+element count as an int: at 2^31 elements (131072 x 512 on a B300, 16384 x
+4096 or 32768 x 2048) it wrapped to INT_MIN, the block count became
+(INT_MIN + 255) / 256 = -8388607, and dim3 made that 4286578689 blocks,
+over the 2^31 - 1 grid limit: "CUDA error: invalid argument" in
+ggml_cuda_op_relu. reduce_rows_f32 (sum_rows, mean) indexed row * ncols in
+int, which wraps above 2^31 elements (32768 x 4096). Both now compute in
+int64_t, and unary_cuda asserts its block count fits the grid. cont (cpy)
+and mul (bin_bcast) already used 64-bit offsets. Unconditional: it only
+widens arithmetic, the results below 2^31 elements are the same.
+---
+ ggml/src/ggml-cuda/reduce_rows.cuh |  4 +-
+ ggml/src/ggml-cuda/unary.cu        | 11 ++--
+ src/llama-graph.cpp                | 82 +++++++++++++++++++++++++++++-
+ 3 files changed, 91 insertions(+), 6 deletions(-)
+
+diff --git a/ggml/src/ggml-cuda/reduce_rows.cuh b/ggml/src/ggml-cuda/reduce_rows.cuh
+index 968c47a..b67d068 100644
+--- a/ggml/src/ggml-cuda/reduce_rows.cuh
++++ b/ggml/src/ggml-cuda/reduce_rows.cuh
+@@ -16,8 +16,10 @@ static __global__ void reduce_rows_f32(const float * x_ptr, float * dst_ptr, con
+     ggml_cuda_pdl_sync();
+     for (int i = col; i < ncols;) {
+         for (int j = 0; j < num_unroll; ++j) {
++            // 64-bit offset: the DeepSeek-V4.1 indexer's sum_rows reads ctx x ubatch x 32 elements, over 2^31 at
++            // 32K x 4096
+             if (i < ncols) {
+-                temp[j] = x[row * ncols + i];
++                temp[j] = x[(int64_t) row * ncols + i];
+             } else {
+                 temp[j] = 0;
+             }
+diff --git a/ggml/src/ggml-cuda/unary.cu b/ggml/src/ggml-cuda/unary.cu
+index d3e5948..e66582a 100644
+--- a/ggml/src/ggml-cuda/unary.cu
++++ b/ggml/src/ggml-cuda/unary.cu
+@@ -114,10 +114,12 @@ static __device__ __forceinline__ float op_trunc(float x) {
+     return trunc(x);
+ }
+ 
++// k and i are 64-bit: the DeepSeek-V4.1 indexer's relu runs on ctx x ubatch x 32 elements, and with an int k
++// 2^31 of them wrapped to a negative block count ("invalid argument" at 131072 x 512)
+ template <float (*op)(float), typename T>
+-static __global__ void unary_op_kernel(const T * x, T * dst, const int k) {
++static __global__ void unary_op_kernel(const T * x, T * dst, const int64_t k) {
+     ggml_cuda_pdl_lc();
+-    const int i = blockDim.x*blockIdx.x + threadIdx.x;
++    const int64_t i = (int64_t)blockDim.x*blockIdx.x + threadIdx.x;
+ 
+     if (i >= k) {
+         return;
+@@ -128,8 +130,9 @@ static __global__ void unary_op_kernel(const T * x, T * dst, const int k) {
+ }
+ 
+ template <float (*op)(float), typename T>
+-static void unary_cuda(const T * x, T * dst, const int k, cudaStream_t stream) {
+-    const int num_blocks = (k + CUDA_NEG_BLOCK_SIZE - 1) / CUDA_NEG_BLOCK_SIZE;
++static void unary_cuda(const T * x, T * dst, const int64_t k, cudaStream_t stream) {
++    const int64_t num_blocks = (k + CUDA_NEG_BLOCK_SIZE - 1) / CUDA_NEG_BLOCK_SIZE;
++    GGML_ASSERT(num_blocks <= INT_MAX);
+     const ggml_cuda_kernel_launch_params launch_params = ggml_cuda_kernel_launch_params((dim3)num_blocks, CUDA_NEG_BLOCK_SIZE, 0, stream);
+     ggml_cuda_kernel_launch(unary_op_kernel<op, T>, launch_params, x, dst, k);
+ }
+diff --git a/src/llama-graph.cpp b/src/llama-graph.cpp
+index 2a9973d..e66afa9 100644
+--- a/src/llama-graph.cpp
++++ b/src/llama-graph.cpp
+@@ -24,6 +24,10 @@
+ #include <string>
+ #include <unordered_set>
+ 
++#if !defined(_WIN32)
++#include <dlfcn.h>
++#endif
++
+ // dedup helpers
+ 
+ static ggml_tensor * build_attn_inp_kq_mask(
+@@ -855,6 +859,37 @@ static std::string dsv4_plan_positions(const std::vector<int32_t> & values) {
+     return ss.str();
+ }
+ 
++// LLAMA_STRATA_MOE=1: build_moe_ffn hands the routed experts to strata_moe_forward, a ggml custom op from
++// libstrata-moe.so (built from the Strata repo against this build's libggml-base, so after it: hence loaded at run
++// time, from next to libllama through its RUNPATH). Unset or 0: the stock graph.
++static ggml_custom_op_t llama_strata_moe_op() {
++    static const ggml_custom_op_t op = []() -> ggml_custom_op_t {
++        const char * env = getenv("LLAMA_STRATA_MOE");
++        if (env == nullptr || strcmp(env, "") == 0 || strcmp(env, "0") == 0) {
++            return nullptr;
++        }
++        if (strcmp(env, "1") != 0) {
++            GGML_ABORT("LLAMA_STRATA_MOE=%s: expected 1 (on), 0 or unset (off)", env);
++        }
++#if defined(_WIN32)
++        GGML_ABORT("LLAMA_STRATA_MOE=1: libstrata-moe is built for Linux only");
++#else
++        void * lib = dlopen("libstrata-moe.so", RTLD_NOW | RTLD_LOCAL);
++        if (lib == nullptr) {
++            GGML_ABORT("LLAMA_STRATA_MOE=1: %s", dlerror());
++        }
++        auto * fn = (ggml_custom_op_t) dlsym(lib, "strata_moe_forward");
++        if (fn == nullptr) {
++            GGML_ABORT("LLAMA_STRATA_MOE=1: %s", dlerror());
++        }
++        LLAMA_LOG_INFO("%s: LLAMA_STRATA_MOE=1, routed experts run in libstrata-moe.so\n", __func__);
++        return fn;
++#endif
++    }();
++
++    return op;
++}
++
+ static bool dsv4_compress_debug() {
+     static const bool debug = []() {
+         const char * env = getenv("LLAMA_DSV4_COMPRESS_DEBUG");
+@@ -2154,6 +2189,51 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+     //call early so that topk-moe can be used
+     ggml_build_forward_expand(gf, weights);
+ 
++    const bool swiglu_clamp_arch = arch == LLM_ARCH_DEEPSEEK4 || arch == LLM_ARCH_DEEPSEEK41 || (arch == LLM_ARCH_DFLASH && hparams.dsv4_hc_mult > 0) || arch == LLM_ARCH_HY_V4;
++
++    if (ggml_custom_op_t strata_op = llama_strata_moe_op()) {
++        // one op for everything below: SwiGLU (as ggml_swiglu_clamp when the layer has a limit), down, times the
++        // weights, the slots summed in order; the rest of the stock options have no counterpart there
++        const float limit = il >= 0 ? hparams.swiglu_clamp_exp[il] : 0.0f;
++        const char * unsupported =
++            gate_up_exps                            ? "merged gate_up experts" :
++            !gate_exps || type_op != LLM_FFN_SILU   ? "an activation other than SwiGLU" :
++            weight_before_ffn                       ? "weights applied before the FFN" :
++            up_exps_b || gate_exps_b || down_exps_b ? "expert biases" :
++            up_exps_s || gate_exps_s || down_exps_s ? "expert scales" :
++            limit > 1e-6f && !swiglu_clamp_arch     ? "this architecture's SwiGLU clamp" : nullptr;
++        for (const auto & lora : *loras) {
++            if (lora.first->get_weight(up_exps) || lora.first->get_weight(gate_exps) || lora.first->get_weight(down_exps)) {
++                unsupported = unsupported ? unsupported : "a LoRA adapter on the experts";
++            }
++        }
++        if (unsupported) {
++            GGML_ABORT("LLAMA_STRATA_MOE=1: layer %d's MoE has %s, which libstrata-moe does not compute", il, unsupported);
++        }
++        // the scheduler would otherwise fail with no backend for the op, without saying why
++        for (ggml_tensor * t : { up_exps, gate_exps, down_exps }) {
++            if (t->buffer && !ggml_backend_buffer_is_host(t->buffer)) {
++                GGML_ABORT("LLAMA_STRATA_MOE=1: %s is in buffer %s, libstrata-moe reads the experts from host memory in ggml's layout (CPU_REPACK: use --no-repack)",
++                        t->name, ggml_backend_buffer_name(t->buffer));
++            }
++        }
++
++        // the stock sum adds the first n_expert_used(il) slots only (warmup selects every expert)
++        const int64_t n_used = hparams.n_expert_used(il);
++        ggml_tensor * ids = ggml_view_2d(ctx0, selected_experts, n_used, n_tokens, selected_experts->nb[1], 0);
++        ggml_tensor * w   = ggml_view_3d(ctx0, weights, 1, n_used, n_tokens, weights->nb[1], weights->nb[2], 0);
++
++        ggml_tensor * args[] = { cur, ids, w, up_exps, gate_exps, down_exps };
++        ggml_tensor * moe_out = ggml_custom_4d(ctx0, GGML_TYPE_F32, n_embd, n_tokens, 1, 1, args, 6, strata_op, GGML_N_TASKS_MAX, nullptr);
++        // the clamp limit (0: plain SwiGLU) is a value in the op's last op_params slot, after ggml's custom-op
++        // params: hparams here is the llm_graph_params copy on process_ubatch's stack, gone when the graph is reused
++        const float clamp = limit > 1e-6f ? limit : 0.0f;
++        memcpy(&moe_out->op_params[GGML_MAX_OP_PARAMS / sizeof(int32_t) - 1], &clamp, sizeof(clamp));
++        cb(moe_out, "ffn_moe_out", il);
++
++        return moe_out;
++    }
++
+     cur = ggml_reshape_3d(ctx0, cur, n_embd, 1, n_tokens);
+ 
+     if (weight_before_ffn) {
+@@ -2225,7 +2305,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+                     const float limit = hparams.swiglu_clamp_exp[il];
+                     constexpr float eps = 1e-6f;
+                     if (limit > eps) {
+-                        if (arch == LLM_ARCH_DEEPSEEK4 || arch == LLM_ARCH_DEEPSEEK41 || (arch == LLM_ARCH_DFLASH && hparams.dsv4_hc_mult > 0) || arch == LLM_ARCH_HY_V4) {
++                        if (swiglu_clamp_arch) {
+                             cur = ggml_swiglu_clamp(ctx0, cur, up, limit);
+                         } else {
+                             up = ggml_clamp(ctx0, up, -limit, limit);
+-- 
+2.51.0
+

@@ -1,0 +1,77 @@
+{
+ "source": "lm-eval 0.4.13 humaneval_instruct, the first 3 doc_ids of quality/subsets_lean2h_seed20261006.json, their requests as the 2026-10-06 API run logged them (the vLLM-EXL3 experiment's data/controlled/E11-quality-reference/api/20261006T181137Z, samples_humaneval_instruct_*.jsonl), with that run's reply",
+ "items": [
+  {
+   "doc_id": 0,
+   "task_id": "HumanEval/0",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Write a solution to the following problem and make sure that it passes the tests:\n```python\nfrom typing import List\n\n\ndef has_close_elements(numbers: List[float], threshold: float) -> bool:\n    \"\"\" Check if in given list of numbers, are any two numbers closer to each other than\n    given threshold.\n    >>> has_close_elements([1.0, 2.0, 3.0], 0.5)\n    False\n    >>> has_close_elements([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)\n    True\n    \"\"\"\n\n```\n"
+    },
+    {
+     "role": "assistant",
+     "content": "Here is the completed function:\n```python\nfrom typing import List\n\n\ndef has_close_elements(numbers: List[float], threshold: float) -> bool:\n    \"\"\" Check if in given list of numbers, are any two numbers closer to each other than\n    given threshold.\n    >>> has_close_elements([1.0, 2.0, 3.0], 0.5)\n    False\n    >>> has_close_elements([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)\n    True\n    \"\"\"\n\n"
+    }
+   ],
+   "until": [
+    "\nclass",
+    "\ndef",
+    "\n#",
+    "\nif",
+    "\nprint"
+   ],
+   "max_gen_toks": 1024,
+   "api_2026_10_06_reply": "    for i in range(len(numbers)):\n        for j in range(i + 1, len(numbers)):\n            if abs(numbers[i] - numbers[j]) < threshold:\n                return True\n    return False\n```\n\nThis uses a simple O(n²) pairwise comparison. For each pair of distinct indices `(i, j)`, it checks whether the absolute difference is strictly less than `threshold`. If any such pair is found, it returns `True`; otherwise, after all pairs are checked, it returns `False`.\n\n- `[1.0, 2.0, 3.0]` with `0.5`: all pairwise differences are ≥ 1.0 → `False` ✓\n- `[1.0, 2.8, 3.0, 4.0, 5.0, 2.0]` with `0.3`: `2.8` and `3.0` differ by `0.2 < 0.3` → `True` ✓",
+   "pass@1": 1.0
+  },
+  {
+   "doc_id": 1,
+   "task_id": "HumanEval/1",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Write a solution to the following problem and make sure that it passes the tests:\n```python\nfrom typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    \"\"\" Input to this function is a string containing multiple groups of nested parentheses. Your goal is to\n    separate those group into separate strings and return the list of those.\n    Separate groups are balanced (each open brace is properly closed) and not nested within each other\n    Ignore any spaces in the input string.\n    >>> separate_paren_groups('( ) (( )) (( )( ))')\n    ['()', '(())', '(()())']\n    \"\"\"\n\n```\n"
+    },
+    {
+     "role": "assistant",
+     "content": "Here is the completed function:\n```python\nfrom typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    \"\"\" Input to this function is a string containing multiple groups of nested parentheses. Your goal is to\n    separate those group into separate strings and return the list of those.\n    Separate groups are balanced (each open brace is properly closed) and not nested within each other\n    Ignore any spaces in the input string.\n    >>> separate_paren_groups('( ) (( )) (( )( ))')\n    ['()', '(())', '(()())']\n    \"\"\"\n\n"
+    }
+   ],
+   "until": [
+    "\nclass",
+    "\ndef",
+    "\n#",
+    "\nif",
+    "\nprint"
+   ],
+   "max_gen_toks": 1024,
+   "api_2026_10_06_reply": "    paren_string = paren_string.replace(\" \", \"\")\n    result = []\n    balance = 0\n    current = \"\"\n\n    for char in paren_string:\n        if char == '(':\n            balance += 1\n            current += char\n        elif char == ')':\n            balance -= 1\n            current += char\n            if balance == 0:\n                result.append(current)\n                current = \"\"\n\n    return result\n```",
+   "pass@1": 1.0
+  },
+  {
+   "doc_id": 2,
+   "task_id": "HumanEval/2",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Write a solution to the following problem and make sure that it passes the tests:\n```python\n\n\ndef truncate_number(number: float) -> float:\n    \"\"\" Given a positive floating point number, it can be decomposed into\n    and integer part (largest integer smaller than given number) and decimals\n    (leftover part always smaller than 1).\n\n    Return the decimal part of the number.\n    >>> truncate_number(3.5)\n    0.5\n    \"\"\"\n\n```\n"
+    },
+    {
+     "role": "assistant",
+     "content": "Here is the completed function:\n```python\n\n\ndef truncate_number(number: float) -> float:\n    \"\"\" Given a positive floating point number, it can be decomposed into\n    and integer part (largest integer smaller than given number) and decimals\n    (leftover part always smaller than 1).\n\n    Return the decimal part of the number.\n    >>> truncate_number(3.5)\n    0.5\n    \"\"\"\n\n"
+    }
+   ],
+   "until": [
+    "\nclass",
+    "\ndef",
+    "\n#",
+    "\nif",
+    "\nprint"
+   ],
+   "max_gen_toks": 1024,
+   "api_2026_10_06_reply": "    return number - int(number)\n```",
+   "pass@1": 1.0
+  }
+ ]
+}

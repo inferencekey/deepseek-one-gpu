@@ -1,0 +1,8 @@
+{
+ "model": "vcruz305/DeepSeek-V4.1-Flash-GGUF Q2_K, revision c4a085541cb53f67ee5e57b63d255e80cef286e7",
+ "source": "the GGUF tensor headers: routed experts Q2_K (gate/up) + Q3_K (down), 183.25 GiB in all = 40 layers x 384 experts x 12,810,240 B exactly; n_embd 5120, n_ff_exp 2304",
+ "n_expert": 384,
+ "n_embd": 5120,
+ "n_ff": 2304,
+ "types": {"up": "q2_K", "gate": "q2_K", "down": "q3_K"}
+}

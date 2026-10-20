@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540" role="img" aria-labelledby="title desc" font-family="system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif">
+<title id="title">Decode speed with 1, 4 and 8 users</title>
+<desc id="desc">One user: 63.11 tok/s. Four users at once: 127.58 tok/s together, 31.87 tok/s for the slowest user. Eight users at once: 152.53 tok/s together, 19.07 tok/s for the median user.</desc>
+<style>
+.bg{fill:#ffffff;stroke:#d0d7de}
+.panel{fill:#f6f8fa;stroke:#d0d7de}
+.t{fill:#1f2328}
+.m{fill:#59636e}
+.f{fill:#818b98}
+.line{stroke:#d0d7de}
+.grid{stroke:#eaeef2}
+.gpu{fill:#1a7f37}.gpus{stroke:#1a7f37}.gpuw{fill:#dafbe1}
+.cpu{fill:#0969da}.cpus{stroke:#0969da}.cpuw{fill:#ddf4ff}
+.amb{fill:#9a6700}.ambs{stroke:#9a6700}.ambw{fill:#fff8c5}
+.api{fill:#8250df}.apis{stroke:#8250df}.apiw{fill:#fbefff}
+.cover{fill:#f6f8fa}
+@media (prefers-color-scheme: dark){
+.bg{fill:#0d1117;stroke:#30363d}
+.panel{fill:#161b22;stroke:#30363d}
+.t{fill:#e6edf3}
+.m{fill:#9198a1}
+.f{fill:#6e7681}
+.line{stroke:#30363d}
+.grid{stroke:#21262d}
+.gpu{fill:#3fb950}.gpus{stroke:#3fb950}.gpuw{fill:#0f2d1a}
+.cpu{fill:#4493f8}.cpus{stroke:#4493f8}.cpuw{fill:#0c2440}
+.amb{fill:#d29922}.ambs{stroke:#d29922}.ambw{fill:#2e2306}
+.api{fill:#ab7df8}.apis{stroke:#ab7df8}.apiw{fill:#2a1a45}
+.cover{fill:#161b22}
+}
+
+.bar{transform-box:fill-box;transform-origin:50% 100%;animation:grow 1.4s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.lab{animation:fade .6s ease-out both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}</style>
+<rect class="bg" x="0.5" y="0.5" width="1199" height="539" rx="16"/>
+<text x="40" y="46" class="t" font-size="22" font-weight="800">Decode speed with 1, 4 and 8 users at once</text>
+<text x="40" y="72" class="m" font-size="15">Tokens per second, steady state (every prompt read), mean of 3 windows of 15 s, one RTX PRO 6000 Blackwell</text>
+<rect class="gpu" x="40" y="92" width="14" height="14" rx="3"/><text x="62" y="104" class="t" font-size="14">all users together</text>
+<rect class="cpu" x="210" y="92" width="14" height="14" rx="3"/><text x="232" y="104" class="t" font-size="14">each user</text>
+<line class="grid" x1="110" y1="420.0" x2="1160" y2="420.0" stroke-width="1"/>
+<text x="100" y="425.0" class="f" font-size="13" text-anchor="end">0</text>
+<line class="grid" x1="110" y1="347.5" x2="1160" y2="347.5" stroke-width="1"/>
+<text x="100" y="352.5" class="f" font-size="13" text-anchor="end">40</text>
+<line class="grid" x1="110" y1="275.0" x2="1160" y2="275.0" stroke-width="1"/>
+<text x="100" y="280.0" class="f" font-size="13" text-anchor="end">80</text>
+<line class="grid" x1="110" y1="202.5" x2="1160" y2="202.5" stroke-width="1"/>
+<text x="100" y="207.5" class="f" font-size="13" text-anchor="end">120</text>
+<line class="grid" x1="110" y1="130.0" x2="1160" y2="130.0" stroke-width="1"/>
+<text x="100" y="135.0" class="f" font-size="13" text-anchor="end">160</text>
+<line class="line" x1="110" y1="420" x2="1160" y2="420" stroke-width="1.5"/>
+<rect class="gpu bar" style="animation-delay:0.20s" x="170" y="305.6" width="96" height="114.4" rx="6"/>
+<text class="t lab" style="animation-delay:1.20s" x="218" y="295.6" font-size="20" font-weight="800" text-anchor="middle">63.11</text>
+<rect class="cpu bar" style="animation-delay:0.35s" x="282" y="305.6" width="96" height="114.4" rx="6"/>
+<text class="t lab" style="animation-delay:1.35s" x="330" y="295.6" font-size="20" font-weight="800" text-anchor="middle">63.11</text>
+<text x="274" y="450" class="t" font-size="16" font-weight="700" text-anchor="middle">1 user</text>
+<rect class="gpu bar" style="animation-delay:0.55s" x="510" y="188.8" width="96" height="231.2" rx="6"/>
+<text class="t lab" style="animation-delay:1.55s" x="558" y="178.8" font-size="20" font-weight="800" text-anchor="middle">127.58</text>
+<rect class="cpu bar" style="animation-delay:0.70s" x="622" y="362.2" width="96" height="57.8" rx="6"/>
+<text class="t lab" style="animation-delay:1.70s" x="670" y="352.2" font-size="20" font-weight="800" text-anchor="middle">31.87</text>
+<text x="614" y="450" class="t" font-size="16" font-weight="700" text-anchor="middle">4 users at once</text>
+<text x="670" y="470" class="m" font-size="13" text-anchor="middle">blue: slowest user</text>
+<rect class="gpu bar" style="animation-delay:0.90s" x="850" y="143.5" width="96" height="276.5" rx="6"/>
+<text class="t lab" style="animation-delay:1.90s" x="898" y="133.5" font-size="20" font-weight="800" text-anchor="middle">152.53</text>
+<rect class="cpu bar" style="animation-delay:1.05s" x="962" y="385.4" width="96" height="34.6" rx="6"/>
+<text class="t lab" style="animation-delay:2.05s" x="1010" y="375.4" font-size="20" font-weight="800" text-anchor="middle">19.07</text>
+<text x="954" y="450" class="t" font-size="16" font-weight="700" text-anchor="middle">8 users at once</text>
+<text x="1010" y="470" class="m" font-size="13" text-anchor="middle">blue: median user</text>
+<text x="40" y="500" class="f" font-size="13">1 and 4 users: RTX PRO 6000 Blackwell Server Edition, AMD EPYC 9575F, engine bound to the GPU's NUMA node, 2026-10-20.</text>
+<text x="40" y="520" class="f" font-size="13">8 users: RTX PRO 6000 Blackwell Server Edition, AMD EPYC 9655, 2026-10-16 (slowest user 19.00). DeepSeek-V4.1-Flash Q2_K.</text>
+</svg>

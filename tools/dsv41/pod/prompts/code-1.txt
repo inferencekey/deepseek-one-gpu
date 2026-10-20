@@ -1,0 +1,1 @@
+Write a C++17 class for a thread-safe bounded queue with blocking push and pop, a try_pop with a timeout, and a close() that wakes every waiter. Include short comments.

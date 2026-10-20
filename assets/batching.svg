@@ -1,0 +1,202 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc" font-family="system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif">
+<title id="title">Batch slots versus one request at a time</title>
+<desc id="desc">One request at a time: 63.11 tok/s in total, the other users wait. With 4 batch slots each decode step makes a token for every user: 127.58 tok/s in total (2.02x), 31.87 tok/s for the slowest user, so the 4 replies finish in about half the time.</desc>
+<style>
+.bg{fill:#ffffff;stroke:#d0d7de}
+.panel{fill:#f6f8fa;stroke:#d0d7de}
+.t{fill:#1f2328}
+.m{fill:#59636e}
+.f{fill:#818b98}
+.line{stroke:#d0d7de}
+.grid{stroke:#eaeef2}
+.gpu{fill:#1a7f37}.gpus{stroke:#1a7f37}.gpuw{fill:#dafbe1}
+.cpu{fill:#0969da}.cpus{stroke:#0969da}.cpuw{fill:#ddf4ff}
+.amb{fill:#9a6700}.ambs{stroke:#9a6700}.ambw{fill:#fff8c5}
+.api{fill:#8250df}.apis{stroke:#8250df}.apiw{fill:#fbefff}
+.cover{fill:#f6f8fa}
+@media (prefers-color-scheme: dark){
+.bg{fill:#0d1117;stroke:#30363d}
+.panel{fill:#161b22;stroke:#30363d}
+.t{fill:#e6edf3}
+.m{fill:#9198a1}
+.f{fill:#6e7681}
+.line{stroke:#30363d}
+.grid{stroke:#21262d}
+.gpu{fill:#3fb950}.gpus{stroke:#3fb950}.gpuw{fill:#0f2d1a}
+.cpu{fill:#4493f8}.cpus{stroke:#4493f8}.cpuw{fill:#0c2440}
+.amb{fill:#d29922}.ambs{stroke:#d29922}.ambw{fill:#2e2306}
+.api{fill:#ab7df8}.apis{stroke:#ab7df8}.apiw{fill:#2a1a45}
+.cover{fill:#161b22}
+}
+
+.cv{transform:translateX(980px);animation:cv 11.0s linear infinite}
+@keyframes cv{0%{transform:none}72.73%,100%{transform:translateX(980px)}}
+.late{animation:late 11.0s linear infinite}
+@keyframes late{0%,35.98%{opacity:0}38.98%,100%{opacity:1}}
+.late2{animation:late2 11.0s linear infinite}
+@keyframes late2{0%,72.73%{opacity:0}75.73%,100%{opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}</style>
+<rect class="bg" x="0.5" y="0.5" width="1199" height="559" rx="16"/>
+<text x="40" y="46" class="t" font-size="22" font-weight="800">Batch slots: several users share every decode step</text>
+<text x="40" y="72" class="m" font-size="15">Each square is one generated token, placed on the time it appears. 4 replies of 16 tokens, drawn at the measured speeds.</text>
+<rect class="panel" x="30" y="96" width="1140" height="190" rx="14"/>
+<text x="50" y="126" class="t" font-size="17" font-weight="700">One request at a time</text>
+<text x="1150" y="126" class="t" font-size="17" font-weight="800" text-anchor="end">63.11 tok/s in total</text>
+<text x="1150" y="148" class="m" font-size="14" text-anchor="end">one user decodes while the others wait</text>
+<text x="50" y="179" class="m" font-size="14">User 1</text>
+<line class="grid" x1="150" y1="174" x2="1110.0" y2="174" stroke-width="1"/>
+<text x="50" y="207" class="m" font-size="14">User 2</text>
+<line class="grid" x1="150" y1="202" x2="1110.0" y2="202" stroke-width="1"/>
+<text x="50" y="235" class="m" font-size="14">User 3</text>
+<line class="grid" x1="150" y1="230" x2="1110.0" y2="230" stroke-width="1"/>
+<text x="50" y="263" class="m" font-size="14">User 4</text>
+<line class="grid" x1="150" y1="258" x2="1110.0" y2="258" stroke-width="1"/>
+<rect class="gpu" x="150.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="165.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="180.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="195.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="210.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="225.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="240.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="255.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="270.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="285.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="300.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="315.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="330.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="345.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="360.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="375.0" y="166" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="390.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="405.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="420.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="435.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="450.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="465.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="480.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="495.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="510.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="525.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="540.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="555.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="570.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="585.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="600.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="615.0" y="194" width="12" height="16" rx="2.5"/>
+<rect class="api" x="630.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="645.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="660.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="675.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="690.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="705.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="720.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="735.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="750.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="765.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="780.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="795.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="810.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="825.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="840.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="api" x="855.0" y="222" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="870.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="885.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="900.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="915.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="930.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="945.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="960.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="975.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="990.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="1005.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="1020.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="1035.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="1050.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="1065.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="1080.0" y="250" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="1095.0" y="250" width="12" height="16" rx="2.5"/>
+<clipPath id="c96"><rect x="148" y="156" width="978.0" height="120"/></clipPath>
+<g clip-path="url(#c96)"><g class="cv"><rect class="cover" x="148" y="156" width="1000.0" height="120"/><line class="ambs" x1="148" y1="158" x2="148" y2="274" stroke-width="2.5"/></g></g>
+<g class="late2"><line class="line" x1="1107.0" y1="158" x2="1107.0" y2="274" stroke-width="1.5" stroke-dasharray="4 4"/><text x="1119.0" y="220" class="t" font-size="15" font-weight="700"></text></g>
+<rect class="panel" x="30" y="306" width="1140" height="190" rx="14"/>
+<text x="50" y="336" class="t" font-size="17" font-weight="700">4 batch slots: one step makes a token for every user</text>
+<text x="1150" y="336" class="t" font-size="17" font-weight="800" text-anchor="end">127.58 tok/s in total (2.02x)</text>
+<text x="1150" y="358" class="m" font-size="14" text-anchor="end">31.87 tok/s for the slowest user</text>
+<text x="50" y="389" class="m" font-size="14">User 1</text>
+<line class="grid" x1="150" y1="384" x2="1110.0" y2="384" stroke-width="1"/>
+<text x="50" y="417" class="m" font-size="14">User 2</text>
+<line class="grid" x1="150" y1="412" x2="1110.0" y2="412" stroke-width="1"/>
+<text x="50" y="445" class="m" font-size="14">User 3</text>
+<line class="grid" x1="150" y1="440" x2="1110.0" y2="440" stroke-width="1"/>
+<text x="50" y="473" class="m" font-size="14">User 4</text>
+<line class="grid" x1="150" y1="468" x2="1110.0" y2="468" stroke-width="1"/>
+<rect class="gpu" x="150.0" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="179.7" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="209.4" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="239.0" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="268.7" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="298.4" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="328.1" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="357.8" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="387.4" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="417.1" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="446.8" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="476.5" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="506.2" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="535.8" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="565.5" y="376" width="12" height="16" rx="2.5"/>
+<rect class="gpu" x="595.2" y="376" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="150.0" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="179.7" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="209.4" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="239.0" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="268.7" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="298.4" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="328.1" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="357.8" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="387.4" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="417.1" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="446.8" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="476.5" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="506.2" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="535.8" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="565.5" y="404" width="12" height="16" rx="2.5"/>
+<rect class="cpu" x="595.2" y="404" width="12" height="16" rx="2.5"/>
+<rect class="api" x="150.0" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="179.7" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="209.4" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="239.0" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="268.7" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="298.4" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="328.1" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="357.8" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="387.4" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="417.1" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="446.8" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="476.5" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="506.2" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="535.8" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="565.5" y="432" width="12" height="16" rx="2.5"/>
+<rect class="api" x="595.2" y="432" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="150.0" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="179.7" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="209.4" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="239.0" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="268.7" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="298.4" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="328.1" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="357.8" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="387.4" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="417.1" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="446.8" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="476.5" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="506.2" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="535.8" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="565.5" y="460" width="12" height="16" rx="2.5"/>
+<rect class="amb" x="595.2" y="460" width="12" height="16" rx="2.5"/>
+<clipPath id="c306"><rect x="148" y="366" width="978.0" height="120"/></clipPath>
+<g clip-path="url(#c306)"><g class="cv"><rect class="cover" x="148" y="366" width="1000.0" height="120"/><line class="ambs" x1="148" y1="368" x2="148" y2="484" stroke-width="2.5"/></g></g>
+<g class="late"><line class="line" x1="624.9" y1="368" x2="624.9" y2="484" stroke-width="1.5" stroke-dasharray="4 4"/><text x="636.9" y="430" class="t" font-size="15" font-weight="700">all 4 replies done in about half the time</text></g>
+<text x="150" y="520" class="m" font-size="14">time</text><line class="line" x1="190" y1="515" x2="1110.0" y2="515" stroke-width="1.5"/><path class="line" d="M1102.0 510 L1110.0 515 L1102.0 520" fill="none" stroke-width="1.5"/>
+<text x="40" y="546" class="f" font-size="13">Decode only, every prompt already read. RTX PRO 6000 Blackwell Server Edition, AMD EPYC 9575F, engine bound to the GPU's NUMA node, 2026-10-20.</text>
+</svg>
