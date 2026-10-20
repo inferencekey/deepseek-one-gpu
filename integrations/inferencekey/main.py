@@ -38,7 +38,7 @@ BACKEND_SLUG = "deepseek-v41-flash-one-gpu"  # from publish.py
 OUT_DIR = HERE / "outputs"
 DEFAULT_PROMPT = "Explain mixture-of-experts models in two sentences."
 # First start: the worker builds the backend venv, then setup() downloads the
-# engine (682 MB) and 264.5 GB of GGUF and loads them. Later starts reuse both.
+# engine (about 0.7 GB) and 264.5 GB of GGUF and loads them. Later starts reuse both.
 READY_TIMEOUT = int(os.environ.get("IK_READY_TIMEOUT", "7200"))
 
 
