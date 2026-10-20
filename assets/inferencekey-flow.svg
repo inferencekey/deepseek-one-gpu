@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc" font-family="system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif">
+<title id="title">Using deepseek-one-gpu from InferenceKey</title>
+<desc id="desc">Three steps. 1: from your laptop, publish.py uploads the custom backend to InferenceKey. 2: main.py calls ensure(); InferenceKey assigns the workload to your private worker, whose backend downloads the engine and the model and starts the server. 3: your OpenAI client sends a chat request to the InferenceKey endpoint, which passes it to the worker; the RTX PRO 6000 and the host's CPU compute the reply, which goes back the same way. Measured on this engine: 63.11 tok/s for 1 user, 127.58 tok/s for 4 users at once.</desc>
+<style>
+.bg{fill:#ffffff;stroke:#d0d7de}
+.panel{fill:#f6f8fa;stroke:#d0d7de}
+.card{fill:#ffffff;stroke:#d0d7de}
+.t{fill:#1f2328}
+.m{fill:#59636e}
+.f{fill:#818b98}
+.line{stroke:#d0d7de}
+.gpu{fill:#1a7f37}.gpus{stroke:#1a7f37}.gpuw{fill:#dafbe1}
+.cpu{fill:#0969da}.cpus{stroke:#0969da}.cpuw{fill:#ddf4ff}
+.amb{fill:#9a6700}.ambs{stroke:#9a6700}.ambw{fill:#fff8c5}
+.api{fill:#8250df}.apis{stroke:#8250df}.apiw{fill:#fbefff}
+.pkt{fill:#ffffff}
+@media (prefers-color-scheme: dark){
+.bg{fill:#0d1117;stroke:#30363d}
+.panel{fill:#161b22;stroke:#30363d}
+.card{fill:#0d1117;stroke:#30363d}
+.t{fill:#e6edf3}
+.m{fill:#9198a1}
+.f{fill:#6e7681}
+.line{stroke:#30363d}
+.gpu{fill:#3fb950}.gpus{stroke:#3fb950}.gpuw{fill:#0f2d1a}
+.cpu{fill:#4493f8}.cpus{stroke:#4493f8}.cpuw{fill:#0c2440}
+.amb{fill:#d29922}.ambs{stroke:#d29922}.ambw{fill:#2e2306}
+.api{fill:#ab7df8}.apis{stroke:#ab7df8}.apiw{fill:#2a1a45}
+.pkt{fill:#0d1117}
+}
+.flow{stroke-dasharray:5 7;animation:dash 1s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-24}}
+.s1{animation:s1 14s linear infinite}
+@keyframes s1{0%,2%{opacity:.35}4%,22%{opacity:1}24%,100%{opacity:.35}}
+.s2{animation:s2 14s linear infinite}
+@keyframes s2{0%,24%{opacity:.35}26%,52%{opacity:1}54%,100%{opacity:.35}}
+.s3{animation:s3 14s linear infinite}
+@keyframes s3{0%,54%{opacity:.35}56%,98%{opacity:1}100%{opacity:.35}}
+.p1{opacity:0;animation:p1 14s ease-in-out infinite}
+@keyframes p1{0%,3%{opacity:0;transform:none}4%{opacity:1;transform:none}18%{opacity:1;transform:translateX(125px)}19%,100%{opacity:0;transform:translateX(125px)}}
+.p2{opacity:0;animation:p2 14s ease-in-out infinite}
+@keyframes p2{0%,26%{opacity:0;transform:none}27%{opacity:1;transform:none}35%{opacity:1;transform:translateX(125px)}36%,100%{opacity:0;transform:translateX(125px)}}
+.p3{opacity:0;animation:p3 14s ease-in-out infinite}
+@keyframes p3{0%,37%{opacity:0;transform:none}38%{opacity:1;transform:none}47%{opacity:1;transform:translateX(125px)}48%,100%{opacity:0;transform:translateX(125px)}}
+.p4{opacity:0;animation:p4 14s ease-in-out infinite}
+@keyframes p4{0%,57%{opacity:0;transform:none}58%{opacity:1;transform:none}65%{opacity:1;transform:translateX(125px)}66%,100%{opacity:0;transform:translateX(125px)}}
+.p6{opacity:0;animation:p6 14s ease-in-out infinite}
+@keyframes p6{0%,66%{opacity:0;transform:none}67%{opacity:1;transform:none}74%{opacity:1;transform:translateX(125px)}75%,100%{opacity:0;transform:translateX(125px)}}
+.p5{opacity:0;animation:p5 14s ease-in-out infinite}
+@keyframes p5{0%,80%{opacity:0;transform:none}81%{opacity:1;transform:none}88%{opacity:1;transform:translateX(-125px)}89%,100%{opacity:0;transform:translateX(-125px)}}
+.p7{opacity:0;animation:p7 14s ease-in-out infinite}
+@keyframes p7{0%,89%{opacity:0;transform:none}90%{opacity:1;transform:none}97%{opacity:1;transform:translateX(-125px)}98%,100%{opacity:0;transform:translateX(-125px)}}
+.busy{animation:busy 14s ease-in-out infinite}
+@keyframes busy{0%,74%{opacity:.45}76%,79%{opacity:1}81%,100%{opacity:.45}}
+.setup{animation:setup 14s ease-in-out infinite}
+@keyframes setup{0%,46%{opacity:.45}48%,54%{opacity:1}56%,100%{opacity:.45}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}.p1,.p2,.p3,.p4,.p5,.p6,.p7{opacity:0}}
+</style>
+<rect class="bg" x="0.5" y="0.5" width="1199" height="559" rx="16"/>
+<text x="40" y="46" class="t" font-size="22" font-weight="800">From your laptop to your own GPU, through InferenceKey</text>
+<text x="40" y="72" class="m" font-size="15">The SDK publishes the backend and declares the workload; the model runs on the worker you registered.</text>
+
+<g class="s1"><rect class="apiw" x="40" y="92" width="350" height="34" rx="17"/><text x="58" y="115" class="api" font-size="15" font-weight="800">1</text><text x="78" y="115" class="t" font-size="15" font-weight="700">publish.py: upload the custom backend</text></g>
+<g class="s2"><rect class="ambw" x="410" y="92" width="370" height="34" rx="17"/><text x="428" y="115" class="amb" font-size="15" font-weight="800">2</text><text x="448" y="115" class="t" font-size="15" font-weight="700">main.py: ensure() the workload</text></g>
+<g class="s3"><rect class="gpuw" x="800" y="92" width="360" height="34" rx="17"/><text x="818" y="115" class="gpu" font-size="15" font-weight="800">3</text><text x="838" y="115" class="t" font-size="15" font-weight="700">openai client: chat through the endpoint</text></g>
+
+<rect class="panel" x="40" y="146" width="290" height="300" rx="14"/>
+<text x="60" y="178" class="t" font-size="18" font-weight="800">Your laptop</text>
+<text x="60" y="200" class="m" font-size="14">inferencekey SDK, no GPU</text>
+<rect class="card" x="56" y="216" width="258" height="96" rx="10"/>
+<text x="70" y="240" class="m" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">$ python publish.py</text>
+<text x="70" y="264" class="m" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">$ python main.py</text>
+<text x="70" y="288" class="m" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">ready, chatting ...</text>
+<rect class="card" x="56" y="324" width="258" height="104" rx="10"/>
+<text x="70" y="348" class="t" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">OpenAI(</text>
+<text x="82" y="370" class="t" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">base_url=".../v1",</text>
+<text x="82" y="392" class="t" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">api_key="ik_live_...")</text>
+<text x="70" y="414" class="m" font-size="13" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">model="default"</text>
+
+<rect class="panel" x="455" y="146" width="290" height="300" rx="14"/>
+<text x="475" y="178" class="t" font-size="18" font-weight="800">InferenceKey</text>
+<text x="475" y="200" class="m" font-size="14">control plane and gateway</text>
+<rect class="card" x="471" y="216" width="258" height="58" rx="10"/>
+<text x="485" y="240" class="m" font-size="13">Custom backends</text>
+<text x="485" y="262" class="api" font-size="13" font-weight="700">deepseek-v41-flash-one-gpu</text>
+<rect class="card" x="471" y="284" width="258" height="58" rx="10"/>
+<text x="485" y="308" class="m" font-size="13">Workload, policy fixed</text>
+<text x="485" y="330" class="amb" font-size="13" font-weight="700">pinned to your worker, conc. 4</text>
+<rect class="card" x="471" y="352" width="258" height="76" rx="10"/>
+<text x="485" y="376" class="m" font-size="13">Endpoint (OpenAI compatible)</text>
+<text x="485" y="398" class="gpu" font-size="12.5" font-weight="700" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">/endpoint/&lt;project&gt;/</text>
+<text x="485" y="416" class="gpu" font-size="12.5" font-weight="700" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">deepseek-v41-flash/v1</text>
+
+<rect class="panel" x="870" y="146" width="290" height="300" rx="14"/>
+<text x="890" y="178" class="t" font-size="18" font-weight="800">Your private worker</text>
+<text x="890" y="200" class="m" font-size="14">the model never leaves this machine</text>
+<rect class="card" x="886" y="216" width="258" height="96" rx="10"/>
+<text x="900" y="240" class="m" font-size="13">backend.py setup(), once</text>
+<g class="setup"><text x="900" y="263" class="t" font-size="13">engine ~0.7 GB + GGUF 264.5 GB</text>
+<text x="900" y="285" class="t" font-size="13">placement, serve.server</text>
+<text x="900" y="303" class="m" font-size="12">bound to the GPU's NUMA node</text></g>
+<rect class="gpuw" x="886" y="324" width="124" height="104" rx="10"/>
+<text x="898" y="348" class="gpu" font-size="13" font-weight="800">RTX PRO 6000</text>
+<text x="898" y="368" class="t" font-size="13">96 GB VRAM</text>
+<text x="898" y="388" class="m" font-size="12">attention + the</text>
+<text x="898" y="404" class="m" font-size="12">hot experts</text>
+<rect class="cpuw" x="1020" y="324" width="124" height="104" rx="10"/>
+<text x="1032" y="348" class="cpu" font-size="13" font-weight="800">CPU + RAM</text>
+<text x="1032" y="368" class="t" font-size="13">~280 GB host</text>
+<text x="1032" y="388" class="m" font-size="12">the other experts,</text>
+<text x="1032" y="404" class="m" font-size="12">in parallel</text>
+<rect class="busy gpu" x="898" y="414" width="100" height="6" rx="3"/>
+<rect class="busy cpu" x="1032" y="414" width="100" height="6" rx="3"/>
+
+<line class="line flow" x1="334" y1="250" x2="451" y2="250" stroke-width="2"/>
+<line class="line flow" x1="749" y1="250" x2="866" y2="250" stroke-width="2"/>
+<line class="line flow" x1="334" y1="300" x2="451" y2="300" stroke-width="2"/>
+<line class="line flow" x1="749" y1="300" x2="866" y2="300" stroke-width="2"/>
+<line class="line flow" x1="451" y1="350" x2="334" y2="350" stroke-width="2"/>
+<line class="line flow" x1="866" y1="350" x2="749" y2="350" stroke-width="2"/>
+
+<g class="p1"><rect class="pkt apis" x="298" y="234" width="64" height="32" rx="8" stroke-width="2"/><text x="330" y="255" class="api" font-size="12" font-weight="800" text-anchor="middle">.tar.gz</text></g>
+<g class="p2"><rect class="pkt ambs" x="298" y="234" width="64" height="32" rx="8" stroke-width="2"/><text x="330" y="255" class="amb" font-size="12" font-weight="800" text-anchor="middle">ensure</text></g>
+<g class="p3"><rect class="pkt ambs" x="713" y="234" width="64" height="32" rx="8" stroke-width="2"/><text x="745" y="255" class="amb" font-size="12" font-weight="800" text-anchor="middle">assign</text></g>
+<g class="p4"><rect class="pkt gpus" x="298" y="284" width="64" height="32" rx="8" stroke-width="2"/><text x="330" y="305" class="gpu" font-size="12" font-weight="800" text-anchor="middle">prompt</text></g>
+<g class="p6"><rect class="pkt gpus" x="713" y="284" width="64" height="32" rx="8" stroke-width="2"/><text x="745" y="305" class="gpu" font-size="12" font-weight="800" text-anchor="middle">prompt</text></g>
+<g class="p5"><rect class="pkt cpus" x="838" y="334" width="64" height="32" rx="8" stroke-width="2"/><text x="870" y="355" class="cpu" font-size="12" font-weight="800" text-anchor="middle">reply</text></g>
+<g class="p7"><rect class="pkt cpus" x="423" y="334" width="64" height="32" rx="8" stroke-width="2"/><text x="455" y="355" class="cpu" font-size="12" font-weight="800" text-anchor="middle">reply</text></g>
+
+<rect class="panel" x="40" y="466" width="1120" height="70" rx="14"/>
+<text x="60" y="495" font-size="16"><tspan class="t" font-weight="700">Measured on this engine (docs/RESULTS.md): </tspan><tspan class="gpu" font-weight="800">63.11 tok/s</tspan><tspan class="m"> for 1 user, </tspan><tspan class="gpu" font-weight="800">127.58 tok/s</tspan><tspan class="m"> for 4 users at once (the workload's concurrency raised to 4)</tspan></text>
+<text x="60" y="520" class="m" font-size="14">RTX PRO 6000 Blackwell Server Edition, AMD EPYC 9575F, engine bound to the GPU's NUMA node, 2026-10-20.</text>
+</svg>
